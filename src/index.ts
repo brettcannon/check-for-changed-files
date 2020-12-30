@@ -13,7 +13,7 @@ async function run(): Promise<void> {
     const requiredGlob = core.getInput("file-glob", { required: true });
     if (!matching.matches(filePaths, requiredGlob)) {
       core.setFailed(
-        `glob pattern ${requiredGlob} did not match any changed files`
+        `the glob pattern '${requiredGlob}' did not match any changed files`
       );
     }
   } catch (error) {

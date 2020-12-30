@@ -7065,20 +7065,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.changedFiles = exports.pullRequestEvent = void 0;
+exports.changedFiles = exports.pullRequestPayload = void 0;
 const github = __importStar(__webpack_require__(5438));
 const core_1 = __webpack_require__(6762);
 const plugin_paginate_rest_1 = __webpack_require__(4193);
 function isPullRequest(eventName, payload) {
     return eventName === "pull_request";
 }
-function pullRequestEvent() {
+function pullRequestPayload() {
     if (isPullRequest(github.context.eventName, github.context.payload)) {
         return github.context.payload;
     }
     return undefined;
 }
-exports.pullRequestEvent = pullRequestEvent;
+exports.pullRequestPayload = pullRequestPayload;
 async function changedFiles(payload) {
     const MyOctokit = core_1.Octokit.plugin(plugin_paginate_rest_1.paginateRest);
     const octokit = new MyOctokit(); // Anonymous to avoid asking for an access token.
@@ -7124,14 +7124,14 @@ const gh = __importStar(__webpack_require__(1772));
 const matching = __importStar(__webpack_require__(123));
 async function run() {
     try {
-        const payload = gh.pullRequestEvent();
+        const payload = gh.pullRequestPayload();
         if (payload === undefined) {
             return;
         }
         const filePaths = await gh.changedFiles(payload);
         const requiredGlob = core.getInput("file-glob", { required: true });
-        if (!matching.match(filePaths, requiredGlob)) {
-            core.setFailed(`glob pattern ${requiredGlob} did not match any changed files`);
+        if (!matching.matches(filePaths, requiredGlob)) {
+            core.setFailed(`the glob pattern '${requiredGlob}' did not match any changed files`);
         }
     }
     catch (error) {
@@ -7168,13 +7168,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.match = void 0;
+exports.matches = void 0;
 const minimatch = __importStar(__webpack_require__(3973));
-function match(filePaths, requiredGlob) {
+function matches(filePaths, requiredGlob) {
     const matches = minimatch.match(filePaths, requiredGlob, { nonull: false });
     return matches.length != 0;
 }
-exports.match = match;
+exports.matches = matches;
 
 
 /***/ }),
