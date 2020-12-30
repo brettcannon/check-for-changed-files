@@ -5,15 +5,15 @@ import * as matching from "./matching";
 
 async function run(): Promise<void> {
   try {
-    const payload = gh.pullRequestEvent();
+    const payload = gh.pullRequestPayload();
     if (payload === undefined) {
       return;
     }
     const filePaths = await gh.changedFiles(payload);
     const requiredGlob = core.getInput("file-glob", { required: true });
-    if (!matching.match(filePaths, requiredGlob)) {
+    if (!matching.matches(filePaths, requiredGlob)) {
       core.setFailed(
-        `glob pattern ${requiredGlob} did not match any changed files`
+        `the glob pattern '${requiredGlob}' did not match any changed files`
       );
     }
   } catch (error) {

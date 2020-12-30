@@ -1,6 +1,6 @@
 import * as minimatch from "minimatch";
 
-export function match(
+export function matches(
   filePaths: readonly string[],
   requiredGlob: string
 ): boolean {

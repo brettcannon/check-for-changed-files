@@ -10,7 +10,7 @@ function isPullRequest(
   return eventName === "pull_request";
 }
 
-export function pullRequestEvent():
+export function pullRequestPayload():
   | EventPayloads.WebhookPayloadPullRequest
   | undefined {
   if (isPullRequest(github.context.eventName, github.context.payload)) {
