@@ -6,22 +6,23 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install node
+        uses: actions/setup-node@v2
         with:
           node-version: "12"
-      - name: Building
-        run: npm run build
-      - name: Linting
-        run: npm run lint
-      - name: Formatting
-        run: npm run format-check
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npm run format-check
 
   dogfood:
     name: Dogfood the action
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 # To run the version of the action from the PR.
-      - uses: ./
+      - name: Check changed files
+        uses: ./
         with:
           file-glob: "package.json" # Assume version will be bumped.
