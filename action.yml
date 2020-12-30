@@ -1,0 +1,10 @@
+name: "Check for Changed Files"
+author: "Brett Cannon"
+description: "Require changed files in a PR"
+inputs:
+  file-glob:
+    description: "Glob pattern for changed file to check for"
+    required: true
+runs:
+  using: "node12"
+  main: "dist/index.js"
