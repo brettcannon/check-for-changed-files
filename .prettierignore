@@ -1,0 +1,6 @@
+# Generated JavaScript.
+dist
+out
+
+# Controlled by npm.
+package-lock.json
