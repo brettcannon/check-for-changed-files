@@ -3,7 +3,7 @@ import * as github from "@actions/github";
 import * as gh from "../src/gh";
 
 test("gh.pullRequestEvent() return undefined by default", () => {
-  expect(gh.pullRequestEvent()).toBeUndefined();
+  expect(gh.pullRequestPayload()).toBeUndefined();
 });
 
 describe("Stub github.context w/ a pull_request payload", () => {
@@ -14,7 +14,7 @@ describe("Stub github.context w/ a pull_request payload", () => {
   afterEach(() => ImportMock.restore());
 
   test("pull_request context is returned by gh.pullRequestEvent()", () => {
-    expect(gh.pullRequestEvent()).toEqual({ number: 42 });
+    expect(gh.pullRequestPayload()).toEqual({ number: 42 });
   });
 });
 
@@ -26,6 +26,6 @@ describe("Stub github.context w/ a 'push' payload", () => {
   afterEach(() => ImportMock.restore());
 
   test("'undefined' is returned by gh.pullRequestEvent()", () => {
-    expect(gh.pullRequestEvent()).toBeUndefined();
+    expect(gh.pullRequestPayload()).toBeUndefined();
   });
 });
