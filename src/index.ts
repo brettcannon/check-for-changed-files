@@ -32,6 +32,7 @@ async function run(): Promise<void> {
     }
 
     const filePattern = core.getInput("file-pattern", { required: true });
+    core.info(`has \\r? ${filePattern.includes("\r")}`);
     if (matching.anyFileMatches(filePaths, filePattern)) {
       core.info(`'${filePattern}' matched the changed files`);
       return;

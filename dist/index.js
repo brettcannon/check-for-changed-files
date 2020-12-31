@@ -7158,8 +7158,9 @@ async function run() {
             return;
         }
         const filePattern = core.getInput("file-pattern", { required: true });
+        core.info(`has \\r? ${filePattern.includes("\r")}`);
         if (matching.anyFileMatches(filePaths, filePattern)) {
-            core.info(`'${filePattern}' matched one of the changed files`);
+            core.info(`'${filePattern}' matched the changed files`);
             return;
         }
         core.setFailed(`prerequisite '${prereqPattern}' matched, but '${filePattern}' did NOT match any changed files`);
@@ -7205,7 +7206,7 @@ exports.defaultPrereqPattern = "**";
  * Check if any of the file paths match the file glob pattern.
  */
 function anyFileMatches(filePaths, pattern) {
-    const regexp = minimatch.makeRe(pattern || "**");
+    const regexp = minimatch.makeRe(pattern || "**", { dot: true });
     return filePaths.some((val) => regexp.test(val));
 }
 exports.anyFileMatches = anyFileMatches;
