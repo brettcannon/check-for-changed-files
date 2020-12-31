@@ -1,26 +1,52 @@
 import * as matching from "../src/matching";
 
-describe("hasFileMatch", () => {
+describe("anyFileMatches()", () => {
+  test("default prerequisite pattern for top-level files", () => {
+    const filePaths = ["package-lock.json", "package.json", "README.md"];
+
+    expect(
+      matching.anyFileMatches(filePaths, matching.defaultPrereqPattern)
+    ).toBeTruthy();
+  });
+
+  test("default prerequisite pattern for files in subdirectories", () => {
+    const filePaths = ["src/index.ts"];
+
+    expect(
+      matching.anyFileMatches(filePaths, matching.defaultPrereqPattern)
+    ).toBeTruthy();
+  });
+
   test("path literal matches", () => {
     const filePaths = ["package-lock.json", "package.json", "README.md"];
     const pathLiteral = "package.json";
-    expect(matching.hasFileMatch(filePaths, pathLiteral)).toBeTruthy();
+
+    expect(matching.anyFileMatches(filePaths, pathLiteral)).toBeTruthy();
   });
 
-  test("glob matches", () => {
+  test("glob matches top-level file", () => {
     const filePaths = ["package-lock.json", "package.json", "README.md"];
     const glob = "package-*.json";
-    expect(matching.hasFileMatch(filePaths, glob)).toBeTruthy();
+
+    expect(matching.anyFileMatches(filePaths, glob)).toBeTruthy();
+  });
+
+  test("glob matches subdirectory", () => {
+    const filePaths = ["package.json", "src/index.ts"];
+    const glob = "src/*.ts";
+
+    expect(matching.anyFileMatches(filePaths, glob)).toBeTruthy();
   });
 
   test("glob does not match", () => {
-    const filePaths = ["package-lock.json", "package.json", "README.md"];
+    const filePaths = ["package-lock.json", "*", "package.json", "README.md"];
     const glob = "*.yml";
-    expect(matching.hasFileMatch(filePaths, glob)).toBeFalsy();
+
+    expect(matching.anyFileMatches(filePaths, glob)).toBeFalsy();
   });
 });
 
-describe("hasLabelMatch", () => {
+describe("hasLabelMatch()", () => {
   test("no skip-label specified", () => {
     expect(matching.hasLabelMatch(["enhnacement"], "")).toBeFalsy();
   });

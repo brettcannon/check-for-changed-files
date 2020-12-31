@@ -7152,11 +7152,17 @@ async function run() {
             return;
         }
         const filePaths = await gh.changedFiles(payload);
-        const filePattern = core.getInput("file-pattern", { required: true });
-        if (!matching.hasFileMatch(filePaths, filePattern)) {
-            core.setFailed(`the glob pattern '${filePattern}' did not match any changed files`);
+        const prereqPattern = core.getInput("prereq-pattern") || matching.defaultPrereqPattern;
+        if (!matching.anyFileMatches(filePaths, prereqPattern)) {
+            core.info(`prerequisite glob pattern '${prereqPattern}' did not match any changed files`);
+            return;
         }
-        core.info(`the glob pattern '${filePattern} mathed one of the changed files`);
+        const filePattern = core.getInput("file-pattern", { required: true });
+        if (!matching.anyFileMatches(filePaths, filePattern)) {
+            core.setFailed(`the glob pattern '${filePattern}' did not match any changed files`);
+            return;
+        }
+        core.info(`the glob pattern '${filePattern}' matched one of the changed files`);
     }
     catch (error) {
         core.setFailed(error.message);
@@ -7192,16 +7198,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.hasLabelMatch = exports.hasFileMatch = void 0;
+exports.hasLabelMatch = exports.anyFileMatches = exports.defaultPrereqPattern = void 0;
 const minimatch = __importStar(__webpack_require__(3973));
+exports.defaultPrereqPattern = "**";
 /**
  * Check if any of the file paths match the file glob pattern.
  */
-function hasFileMatch(filePaths, filePattern) {
-    const matches = minimatch.match(filePaths, filePattern, { nonull: false });
-    return matches.length != 0;
+function anyFileMatches(filePaths, pattern) {
+    const regexp = minimatch.makeRe(pattern || "**");
+    return filePaths.some((val) => regexp.test(val));
 }
-exports.hasFileMatch = hasFileMatch;
+exports.anyFileMatches = anyFileMatches;
 function hasLabelMatch(labels, skipLabel) {
     return labels.includes(skipLabel);
 }
