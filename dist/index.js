@@ -7065,13 +7065,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.changedFiles = exports.pullRequestPayload = void 0;
+exports.changedFiles = exports.pullRequestLabels = exports.pullRequestPayload = void 0;
 const github = __importStar(__webpack_require__(5438));
 const core_1 = __webpack_require__(6762);
 const plugin_paginate_rest_1 = __webpack_require__(4193);
 function isPullRequest(eventName, payload) {
     return eventName === "pull_request";
 }
+/**
+ * Check if `github.context.payload` is from a PR, returning it as the appropriate type.
+ *
+ * Returns `undefined` if the context is anything but a PR.
+ */
 function pullRequestPayload() {
     if (isPullRequest(github.context.eventName, github.context.payload)) {
         return github.context.payload;
@@ -7079,6 +7084,16 @@ function pullRequestPayload() {
     return undefined;
 }
 exports.pullRequestPayload = pullRequestPayload;
+/**
+ * Get the labels of the PR.
+ */
+function pullRequestLabels(payload) {
+    return payload.pull_request.labels.map((labelData) => labelData.name);
+}
+exports.pullRequestLabels = pullRequestLabels;
+/**
+ * Fetch the list of changed files in the PR.
+ */
 async function changedFiles(payload) {
     const MyOctokit = core_1.Octokit.plugin(plugin_paginate_rest_1.paginateRest);
     const octokit = new MyOctokit(); // Anonymous to avoid asking for an access token.
@@ -7129,7 +7144,7 @@ async function run() {
             return;
         }
         const filePaths = await gh.changedFiles(payload);
-        const requiredGlob = core.getInput("file-glob", { required: true });
+        const requiredGlob = core.getInput("file-pattern", { required: true });
         if (!matching.matches(filePaths, requiredGlob)) {
             core.setFailed(`the glob pattern '${requiredGlob}' did not match any changed files`);
         }
@@ -7170,8 +7185,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.matches = void 0;
 const minimatch = __importStar(__webpack_require__(3973));
-function matches(filePaths, requiredGlob) {
-    const matches = minimatch.match(filePaths, requiredGlob, { nonull: false });
+/**
+ * Check if any of the file paths match the file glob pattern.
+ */
+function matches(filePaths, filePattern) {
+    const matches = minimatch.match(filePaths, filePattern, { nonull: false });
     return matches.length != 0;
 }
 exports.matches = matches;
