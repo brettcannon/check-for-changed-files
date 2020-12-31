@@ -33,7 +33,7 @@ async function run(): Promise<void> {
 
     const filePattern = core.getInput("file-pattern", { required: true });
     if (matching.anyFileMatches(filePaths, filePattern)) {
-      core.info(`'${filePattern}' matched one of the changed files`);
+      core.info(`'${filePattern}' matched the changed files`);
       return;
     }
 
