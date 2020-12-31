@@ -1,4 +1,11 @@
-on: [pull_request]
+on:
+  pull_request:
+    types:
+      - "opened"
+      - "reopened"
+      - "synchronize"
+      - "labeled"
+      - "unlabeled"
 name: PR status checks
 
 jobs:
@@ -25,4 +32,4 @@ jobs:
       - name: Check changed files
         uses: ./
         with:
-          file-glob: "package.json" # Assume version will be bumped.
+          file-pattern: "package.json" # Assume version will be bumped.
