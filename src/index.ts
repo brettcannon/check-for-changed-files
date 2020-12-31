@@ -26,21 +26,21 @@ async function run(): Promise<void> {
       core.getInput("prereq-pattern") || matching.defaultPrereqPattern;
     if (!matching.anyFileMatches(filePaths, prereqPattern)) {
       core.info(
-        `prerequisite glob pattern '${prereqPattern}' did not match any changed files`
+        `prerequisite pattern '${prereqPattern}' did not match any changed files`
       );
       return;
     }
 
     const filePattern = core.getInput("file-pattern", { required: true });
-    if (!matching.anyFileMatches(filePaths, filePattern)) {
-      core.setFailed(
-        `the glob pattern '${filePattern}' did not match any changed files`
+    if (matching.anyFileMatches(filePaths, filePattern)) {
+      core.info(
+        `the pattern '${filePattern}' matched one of the changed files`
       );
       return;
     }
 
-    core.info(
-      `the glob pattern '${filePattern}' matched one of the changed files`
+    core.setFailed(
+      `the prerequisite pattern '${prereqPattern}' matched, but the pattern '${filePattern}' did NOT match any changed files`
     );
   } catch (error) {
     core.setFailed(error.message);
