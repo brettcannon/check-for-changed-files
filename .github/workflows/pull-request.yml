@@ -32,5 +32,11 @@ jobs:
       - name: Check changed files
         uses: ./
         with:
-          file-pattern: "package.json" # Assume version will be bumped.
+          file-pattern: "package.json"
           skip-label: "skip package.json"
+      - name: Check changed files
+        uses: ./
+        with:
+          prereq-pattern: "src/*.ts"
+          file-pattern: "dist/index.js"
+          skip-label: "skip packaging"

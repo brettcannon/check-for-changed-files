@@ -22,8 +22,17 @@ async function run(): Promise<void> {
     }
 
     const filePaths = await gh.changedFiles(payload);
+    const prereqPattern =
+      core.getInput("prereq-pattern") || matching.defaultPrereqPattern;
+    if (!matching.anyFileMatches(filePaths, prereqPattern)) {
+      core.info(
+        `prerequisite glob pattern '${prereqPattern}' did not match any changed files`
+      );
+      return;
+    }
+
     const filePattern = core.getInput("file-pattern", { required: true });
-    if (!matching.hasFileMatch(filePaths, filePattern)) {
+    if (!matching.anyFileMatches(filePaths, filePattern)) {
       core.setFailed(
         `the glob pattern '${filePattern}' did not match any changed files`
       );

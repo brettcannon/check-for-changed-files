@@ -5,6 +5,9 @@ inputs:
   file-pattern:
     description: "Glob pattern for changed file to check for"
     required: true
+  prereq-pattern:
+    description: "Glob pattern that guards whether the action will run"
+    required: false
   skip-label:
     description: "Label to trigger skipping the check"
     required: false
