@@ -29,12 +29,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2 # To run the version of the action from the PR.
-      - name: Check changed files
+
+      - name: package.json updated
         uses: ./
         with:
           file-pattern: "package.json"
-          skip-label: "skip package.json"
-      - name: Check changed files
+          skip-label: "skip package*.json"
+
+      - name: package-lock.json updated
+        uses: ./
+        with:
+          prereq-pattern: "package.json"
+          file-pattern: "package-lock.json"
+          skip-label: "skip package*.json"
+
+      - name: dist/index.js updated
         uses: ./
         with:
           prereq-pattern: "src/*.ts"
