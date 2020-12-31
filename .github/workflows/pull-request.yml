@@ -33,7 +33,9 @@ jobs:
       - name: package.json updated
         uses: ./
         with:
-          file-pattern: "package.json"
+          file-pattern: |
+            package.json
+            package-lock.json
           skip-label: "skip package*.json"
 
       - name: package-lock.json updated
@@ -47,7 +49,5 @@ jobs:
         uses: ./
         with:
           prereq-pattern: "src/*.ts"
-          file-pattern: |
-            dist/index.js
-            dist/index.js.map
+          file-pattern: "dist/index.js"
           skip-label: "skip packaging"
