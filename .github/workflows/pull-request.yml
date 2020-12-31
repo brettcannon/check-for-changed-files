@@ -33,3 +33,4 @@ jobs:
         uses: ./
         with:
           file-pattern: "package.json" # Assume version will be bumped.
+          skip-label: "skip package.json"

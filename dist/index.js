@@ -7143,10 +7143,15 @@ async function run() {
         if (payload === undefined) {
             return;
         }
+        const skipLabel = core.getInput("skip-label");
+        const prLabels = gh.pullRequestLabels(payload);
+        if (matching.hasLabelMatch(prLabels, skipLabel)) {
+            return;
+        }
         const filePaths = await gh.changedFiles(payload);
-        const requiredGlob = core.getInput("file-pattern", { required: true });
-        if (!matching.matches(filePaths, requiredGlob)) {
-            core.setFailed(`the glob pattern '${requiredGlob}' did not match any changed files`);
+        const filePattern = core.getInput("file-pattern", { required: true });
+        if (!matching.hasFileMatch(filePaths, filePattern)) {
+            core.setFailed(`the glob pattern '${filePattern}' did not match any changed files`);
         }
     }
     catch (error) {
@@ -7183,16 +7188,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.matches = void 0;
+exports.hasLabelMatch = exports.hasFileMatch = void 0;
 const minimatch = __importStar(__webpack_require__(3973));
 /**
  * Check if any of the file paths match the file glob pattern.
  */
-function matches(filePaths, filePattern) {
+function hasFileMatch(filePaths, filePattern) {
     const matches = minimatch.match(filePaths, filePattern, { nonull: false });
     return matches.length != 0;
 }
-exports.matches = matches;
+exports.hasFileMatch = hasFileMatch;
+function hasLabelMatch(labels, skipLabel) {
+    return labels.includes(skipLabel);
+}
+exports.hasLabelMatch = hasLabelMatch;
 
 
 /***/ }),

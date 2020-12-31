@@ -9,11 +9,18 @@ async function run(): Promise<void> {
     if (payload === undefined) {
       return;
     }
+
+    const skipLabel = core.getInput("skip-label");
+    const prLabels = gh.pullRequestLabels(payload);
+    if (matching.hasLabelMatch(prLabels, skipLabel)) {
+      return;
+    }
+
     const filePaths = await gh.changedFiles(payload);
-    const requiredGlob = core.getInput("file-pattern", { required: true });
-    if (!matching.matches(filePaths, requiredGlob)) {
+    const filePattern = core.getInput("file-pattern", { required: true });
+    if (!matching.hasFileMatch(filePaths, filePattern)) {
       core.setFailed(
-        `the glob pattern '${requiredGlob}' did not match any changed files`
+        `the glob pattern '${filePattern}' did not match any changed files`
       );
     }
   } catch (error) {
