@@ -47,5 +47,7 @@ jobs:
         uses: ./
         with:
           prereq-pattern: "src/*.ts"
-          file-pattern: "dist/index.js"
+          file-pattern: |
+            dist/index.js
+            dist/index.js.map
           skip-label: "skip packaging"
