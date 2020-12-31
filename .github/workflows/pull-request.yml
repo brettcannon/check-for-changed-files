@@ -30,10 +30,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2 # To run the version of the action from the PR.
 
-      - name: package.json updated
+      - name: package*.json updated
         uses: ./
         with:
-          file-pattern: "package.json"
+          file-pattern: |
+            package.json
+            package-lock.json
           skip-label: "skip package*.json"
 
       - name: package-lock.json updated

@@ -7138,31 +7138,34 @@ const core = __importStar(__webpack_require__(2186));
 const github = __importStar(__webpack_require__(5438));
 const gh = __importStar(__webpack_require__(1772));
 const matching = __importStar(__webpack_require__(123));
+function repr(str) {
+    return JSON.stringify(str);
+}
 async function run() {
     try {
         const payload = gh.pullRequestPayload();
         if (payload === undefined) {
-            core.info(`'${github.context.eventName}' is not a pull request event; skipping`);
+            core.info(`${repr(github.context.eventName)} is not a pull request event; skipping`);
             return;
         }
         const skipLabel = core.getInput("skip-label");
         const prLabels = gh.pullRequestLabels(payload);
         if (matching.hasLabelMatch(prLabels, skipLabel)) {
-            core.info(`the skip label '${skipLabel}' is set`);
+            core.info(`the skip label ${repr(skipLabel)} is set`);
             return;
         }
         const filePaths = await gh.changedFiles(payload);
         const prereqPattern = core.getInput("prereq-pattern") || matching.defaultPrereqPattern;
         if (!matching.anyFileMatches(filePaths, prereqPattern)) {
-            core.info(`prerequisite '${prereqPattern}' did not match any changed files`);
+            core.info(`prerequisite ${repr(prereqPattern)} did not match any changed files`);
             return;
         }
         const filePattern = core.getInput("file-pattern", { required: true });
         if (matching.anyFileMatches(filePaths, filePattern)) {
-            core.info(`'${filePattern}' matched one of the changed files`);
+            core.info(`${repr(filePattern)} matched the changed files`);
             return;
         }
-        core.setFailed(`prerequisite '${prereqPattern}' matched, but '${filePattern}' did NOT match any changed files`);
+        core.setFailed(`prerequisite ${repr(prereqPattern)} matched, but ${repr(filePattern)} did NOT match any changed files`);
     }
     catch (error) {
         core.setFailed(error.message);
@@ -7200,15 +7203,27 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.hasLabelMatch = exports.anyFileMatches = exports.defaultPrereqPattern = void 0;
 const minimatch = __importStar(__webpack_require__(3973));
+/** The default pattern for the `prereq-pattern` input. */
 exports.defaultPrereqPattern = "**";
 /**
  * Check if any of the file paths match the file glob pattern.
+ *
+ * If `pattern` is falsy then `defaultPrereqPattern` is used. If `pattern` is multi-line,
+ * then it is split and all lines are used to try to find a matching file path.
  */
 function anyFileMatches(filePaths, pattern) {
-    const regexp = minimatch.makeRe(pattern || "**");
-    return filePaths.some((val) => regexp.test(val));
+    const patterns = pattern
+        ? pattern.split("\n")
+        : [exports.defaultPrereqPattern];
+    return patterns.some((pattern) => {
+        const regexp = minimatch.makeRe(pattern, { dot: true });
+        return filePaths.some((val) => regexp.test(val));
+    });
 }
 exports.anyFileMatches = anyFileMatches;
+/**
+ * Check if the array of label names matches the specified skip label.
+ */
 function hasLabelMatch(labels, skipLabel) {
     return labels.includes(skipLabel);
 }
