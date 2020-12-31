@@ -7135,17 +7135,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__webpack_require__(2186));
+const github = __importStar(__webpack_require__(5438));
 const gh = __importStar(__webpack_require__(1772));
 const matching = __importStar(__webpack_require__(123));
 async function run() {
     try {
         const payload = gh.pullRequestPayload();
         if (payload === undefined) {
+            core.info(`the event '${github.context.eventName}' is not for a pull request; skipping`);
             return;
         }
         const skipLabel = core.getInput("skip-label");
         const prLabels = gh.pullRequestLabels(payload);
         if (matching.hasLabelMatch(prLabels, skipLabel)) {
+            core.info(`the skip label '${skipLabel}' matched`);
             return;
         }
         const filePaths = await gh.changedFiles(payload);
