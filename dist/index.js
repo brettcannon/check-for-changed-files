@@ -7135,18 +7135,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__webpack_require__(2186));
+const github = __importStar(__webpack_require__(5438));
 const gh = __importStar(__webpack_require__(1772));
 const matching = __importStar(__webpack_require__(123));
 async function run() {
     try {
         const payload = gh.pullRequestPayload();
         if (payload === undefined) {
+            core.info(`the event '${github.context.eventName}' is not for a pull request; skipping`);
+            return;
+        }
+        const skipLabel = core.getInput("skip-label");
+        const prLabels = gh.pullRequestLabels(payload);
+        if (matching.hasLabelMatch(prLabels, skipLabel)) {
+            core.info(`the skip label '${skipLabel}' matched`);
             return;
         }
         const filePaths = await gh.changedFiles(payload);
-        const requiredGlob = core.getInput("file-pattern", { required: true });
-        if (!matching.matches(filePaths, requiredGlob)) {
-            core.setFailed(`the glob pattern '${requiredGlob}' did not match any changed files`);
+        const filePattern = core.getInput("file-pattern", { required: true });
+        if (!matching.hasFileMatch(filePaths, filePattern)) {
+            core.setFailed(`the glob pattern '${filePattern}' did not match any changed files`);
         }
     }
     catch (error) {
@@ -7183,16 +7191,20 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.matches = void 0;
+exports.hasLabelMatch = exports.hasFileMatch = void 0;
 const minimatch = __importStar(__webpack_require__(3973));
 /**
  * Check if any of the file paths match the file glob pattern.
  */
-function matches(filePaths, filePattern) {
+function hasFileMatch(filePaths, filePattern) {
     const matches = minimatch.match(filePaths, filePattern, { nonull: false });
     return matches.length != 0;
 }
-exports.matches = matches;
+exports.hasFileMatch = hasFileMatch;
+function hasLabelMatch(labels, skipLabel) {
+    return labels.includes(skipLabel);
+}
+exports.hasLabelMatch = hasLabelMatch;
 
 
 /***/ }),

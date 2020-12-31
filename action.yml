@@ -5,6 +5,9 @@ inputs:
   file-pattern:
     description: "Glob pattern for changed file to check for"
     required: true
+  skip-label:
+    description: "Label to trigger skipping the check"
+    required: false
 runs:
   using: "node12"
   main: "dist/index.js"

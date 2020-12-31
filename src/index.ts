@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import * as github from "@actions/github";
 
 import * as gh from "./gh";
 import * as matching from "./matching";
@@ -7,13 +8,24 @@ async function run(): Promise<void> {
   try {
     const payload = gh.pullRequestPayload();
     if (payload === undefined) {
+      core.info(
+        `the event '${github.context.eventName}' is not for a pull request; skipping`
+      );
       return;
     }
+
+    const skipLabel = core.getInput("skip-label");
+    const prLabels = gh.pullRequestLabels(payload);
+    if (matching.hasLabelMatch(prLabels, skipLabel)) {
+      core.info(`the skip label '${skipLabel}' matched`);
+      return;
+    }
+
     const filePaths = await gh.changedFiles(payload);
-    const requiredGlob = core.getInput("file-pattern", { required: true });
-    if (!matching.matches(filePaths, requiredGlob)) {
+    const filePattern = core.getInput("file-pattern", { required: true });
+    if (!matching.hasFileMatch(filePaths, filePattern)) {
       core.setFailed(
-        `the glob pattern '${requiredGlob}' did not match any changed files`
+        `the glob pattern '${filePattern}' did not match any changed files`
       );
     }
   } catch (error) {
