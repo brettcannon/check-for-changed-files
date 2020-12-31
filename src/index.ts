@@ -28,6 +28,10 @@ async function run(): Promise<void> {
         `the glob pattern '${filePattern}' did not match any changed files`
       );
     }
+
+    core.info(
+      `the glob pattern '${filePattern} mathed one of the changed files`
+    );
   } catch (error) {
     core.setFailed(error.message);
   }
