@@ -36,10 +36,11 @@ async function run(): Promise<void> {
       core.setFailed(
         `the glob pattern '${filePattern}' did not match any changed files`
       );
+      return;
     }
 
     core.info(
-      `the glob pattern '${filePattern} mathed one of the changed files`
+      `the glob pattern '${filePattern}' matched one of the changed files`
     );
   } catch (error) {
     core.setFailed(error.message);
