@@ -10,9 +10,9 @@ An action to check that PRs have changed certain files.
 
 ### `prereq-pattern`
 
-Pre-requisite glob pattern that, if specified and it matches, the action runs.
-If the pattern is defined and it does not match, the action is considered passing.
-Not specifying the pattern means implicitly that it "matches".
+A pre-requisite glob pattern that, if specified, will cause the action to proceed
+only if the pattern matches. If a match isn't found then the action is considered
+successful.
 
 ### `skip-label`
 

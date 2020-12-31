@@ -17,6 +17,14 @@ describe("anyFileMatches()", () => {
     ).toBeTruthy();
   });
 
+  test("default prerequisite pattern matches things in `.` subdirectories", () => {
+    const filePaths = [".github/workflows/pull-request.yml"];
+
+    expect(
+      matching.anyFileMatches(filePaths, matching.defaultPrereqPattern)
+    ).toBeTruthy();
+  });
+
   test("path literal matches", () => {
     const filePaths = ["package-lock.json", "package.json", "README.md"];
     const pathLiteral = "package.json";
@@ -43,6 +51,13 @@ describe("anyFileMatches()", () => {
     const glob = "*.yml";
 
     expect(matching.anyFileMatches(filePaths, glob)).toBeFalsy();
+  });
+
+  test("mult-line patterns", () => {
+    const filePaths = ["README.md", "package.json", "dist/index.js"];
+    const glob = "package.json\npackage-lock.json";
+
+    expect(matching.anyFileMatches(filePaths, glob)).toBeTruthy();
   });
 });
 
