@@ -9,7 +9,7 @@ async function run(): Promise<void> {
     const payload = gh.pullRequestPayload();
     if (payload === undefined) {
       core.info(
-        `the event '${github.context.eventName}' is not for a pull request; skipping`
+        `'${github.context.eventName}' is not a pull request event; skipping`
       );
       return;
     }
@@ -17,7 +17,7 @@ async function run(): Promise<void> {
     const skipLabel = core.getInput("skip-label");
     const prLabels = gh.pullRequestLabels(payload);
     if (matching.hasLabelMatch(prLabels, skipLabel)) {
-      core.info(`the skip label '${skipLabel}' matched`);
+      core.info(`the skip label '${skipLabel}' is set`);
       return;
     }
 
@@ -26,21 +26,19 @@ async function run(): Promise<void> {
       core.getInput("prereq-pattern") || matching.defaultPrereqPattern;
     if (!matching.anyFileMatches(filePaths, prereqPattern)) {
       core.info(
-        `prerequisite pattern '${prereqPattern}' did not match any changed files`
+        `prerequisite '${prereqPattern}' did not match any changed files`
       );
       return;
     }
 
     const filePattern = core.getInput("file-pattern", { required: true });
     if (matching.anyFileMatches(filePaths, filePattern)) {
-      core.info(
-        `the pattern '${filePattern}' matched one of the changed files`
-      );
+      core.info(`'${filePattern}' matched one of the changed files`);
       return;
     }
 
     core.setFailed(
-      `the prerequisite pattern '${prereqPattern}' matched, but the pattern '${filePattern}' did NOT match any changed files`
+      `prerequisite '${prereqPattern}' matched, but '${filePattern}' did NOT match any changed files`
     );
   } catch (error) {
     core.setFailed(error.message);
