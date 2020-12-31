@@ -10,7 +10,7 @@ async function run(): Promise<void> {
       return;
     }
     const filePaths = await gh.changedFiles(payload);
-    const requiredGlob = core.getInput("file-glob", { required: true });
+    const requiredGlob = core.getInput("file-pattern", { required: true });
     if (!matching.matches(filePaths, requiredGlob)) {
       core.setFailed(
         `the glob pattern '${requiredGlob}' did not match any changed files`
