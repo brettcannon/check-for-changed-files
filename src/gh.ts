@@ -10,6 +10,11 @@ function isPullRequest(
   return eventName === "pull_request";
 }
 
+/**
+ * Check if `github.context.payload` is from a PR, returning it as the appropriate type.
+ *
+ * Returns `undefined` if the context is anything but a PR.
+ */
 export function pullRequestPayload():
   | EventPayloads.WebhookPayloadPullRequest
   | undefined {
@@ -19,6 +24,18 @@ export function pullRequestPayload():
   return undefined;
 }
 
+/**
+ * Get the labels of the PR.
+ */
+export function pullRequestLabels(
+  payload: EventPayloads.WebhookPayloadPullRequest
+): string[] {
+  return payload.pull_request.labels.map((labelData) => labelData.name);
+}
+
+/**
+ * Fetch the list of changed files in the PR.
+ */
 export async function changedFiles(
   payload: EventPayloads.WebhookPayloadPullRequest
 ): Promise<string[]> {
