@@ -33,7 +33,7 @@ jobs:
       - name: package.json updated
         uses: ./
         with:
-          file-pattern: |
+          file-pattern: >
             package.json
             package-lock.json
           skip-label: "skip package*.json"
