@@ -45,6 +45,7 @@ on:
     types:
       # On by default if you specify no types.
       - "opened"
+      - "reopened"
       - "synchronize"
       # For `skip-label` only.
       - "labeled"
