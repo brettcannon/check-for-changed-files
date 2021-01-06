@@ -53,9 +53,11 @@ on:
 jobs:
   ...
     ...
-    name: "Check for news entry"
-    uses: brettcannon/check-for-changed-files
-    with:
-      file-pattern: "changelog.d/*.rst"
-      skip-label: "skip news"
+    steps:
+      ...
+      - name: "Check for news entry"
+        uses: brettcannon/check-for-changed-files
+        with:
+          file-pattern: "changelog.d/*.rst"
+          skip-label: "skip news"
 ```
