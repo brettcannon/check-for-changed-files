@@ -11,5 +11,4 @@ updates:
     directory: "/"
     labels: []
     schedule:
-      interval: "weekly"
-      day: "friday"
+      interval: "monthly"
