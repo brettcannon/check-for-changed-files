@@ -29,11 +29,17 @@ only if the pattern matches. If a match isn't found then the action is considere
 successful.
 
 See the notes about patterns for `file-pattern` for details on how matching
-occurs and flexibility in specifying the pattern.
+occurs and the flexibility in specifying the pattern.
 
 ### `skip-label`
 
 The name of a label to forcibly skip the changed file check.
+
+### `failure-message`
+
+The message to emit when the check fails. All other inputs can be specified in
+the message using `${}` syntax, e.g. `${file-pattern}` for the `file-pattern`
+input. All values will be quoted for easy identification of any whitespace.
 
 ## Example usage (for requiring a news entry file)
 
@@ -61,4 +67,5 @@ jobs:
         with:
           file-pattern: "changelog.d/*.rst"
           skip-label: "skip news"
+          failure-message: "Missing a news file in ${file-pattern}; please add one or apply the ${skip-label} label to the pull request"
 ```

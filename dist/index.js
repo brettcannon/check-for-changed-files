@@ -7110,6 +7110,18 @@ exports.changedFiles = changedFiles;
 /***/ }),
 
 /***/ 6144:
+/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const main_1 = __nccwpck_require__(399);
+main_1.main();
+
+
+/***/ }),
+
+/***/ 399:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -7134,6 +7146,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.main = exports.formatFailureMessage = exports.repr = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const gh = __importStar(__nccwpck_require__(1772));
@@ -7141,7 +7154,15 @@ const matching = __importStar(__nccwpck_require__(123));
 function repr(str) {
     return JSON.stringify(str);
 }
-async function run() {
+exports.repr = repr;
+function formatFailureMessage(template, prereqPattern, filePattern, skipLabel) {
+    return template
+        .replace("${prereq-pattern}", repr(prereqPattern))
+        .replace("${file-pattern}", repr(filePattern))
+        .replace("${skip-label}", repr(skipLabel));
+}
+exports.formatFailureMessage = formatFailureMessage;
+async function main() {
     try {
         const payload = gh.pullRequestPayload();
         if (payload === undefined) {
@@ -7157,21 +7178,22 @@ async function run() {
         const filePaths = await gh.changedFiles(payload);
         const prereqPattern = core.getInput("prereq-pattern") || matching.defaultPrereqPattern;
         if (!matching.anyFileMatches(filePaths, prereqPattern)) {
-            core.info(`prerequisite ${repr(prereqPattern)} did not match any changed files`);
+            core.info(`the prerequisite ${repr(prereqPattern)} file pattern did not match any changed files of the pull request`);
             return;
         }
         const filePattern = core.getInput("file-pattern", { required: true });
         if (matching.anyFileMatches(filePaths, filePattern)) {
-            core.info(`${repr(filePattern)} matched the changed files`);
+            core.info(`the ${repr(filePattern)} file pattern matched the changed files of the pull request`);
             return;
         }
-        core.setFailed(`prerequisite ${repr(prereqPattern)} matched, but ${repr(filePattern)} did NOT match any changed files`);
+        const failureMessage = core.getInput("failure-message");
+        core.setFailed(formatFailureMessage(failureMessage, prereqPattern, filePattern, skipLabel));
     }
     catch (error) {
         core.setFailed(error.message);
     }
 }
-run();
+exports.main = main;
 
 
 /***/ }),

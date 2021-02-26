@@ -15,6 +15,10 @@ inputs:
   skip-label:
     description: "Label to trigger skipping the check"
     required: false
+  failure-message:
+    description: "String template used when the check fails"
+    required: false
+    default: "the prerequisite file pattern ${prereq-pattern} matched changed files in the pull request, but the ${file-pattern} pattern did NOT and the ${skip-label} label is not set"
 runs:
   using: "node12"
   main: "dist/index.js"
