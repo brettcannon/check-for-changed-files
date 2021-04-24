@@ -6,10 +6,3 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
-
-  - package-ecosystem: "npm"
-    directory: "/"
-    labels: []
-    schedule:
-      interval: "weekly"
-      day: "friday"
