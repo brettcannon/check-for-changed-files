@@ -71,6 +71,6 @@ export async function main(): Promise<void> {
       )
     );
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
