@@ -2,6 +2,7 @@ import * as github from "@actions/github";
 import { Octokit } from "@octokit/core";
 import { paginateRest } from "@octokit/plugin-paginate-rest";
 import { EventPayloads } from "@octokit/webhooks";
+import * as core from "@actions/core";
 
 function isPullRequest(
   eventName: string,
@@ -40,7 +41,11 @@ export async function changedFiles(
   payload: EventPayloads.WebhookPayloadPullRequest
 ): Promise<string[]> {
   const MyOctokit = Octokit.plugin(paginateRest);
-  const octokit = new MyOctokit(); // Anonymous to avoid asking for an access token.
+
+  // Get the token from the inputs
+  const token = core.getInput("token");
+
+  const octokit = token ? new MyOctokit({ auth: token }) : new MyOctokit();
 
   return await octokit.paginate(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",

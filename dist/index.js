@@ -11624,6 +11624,7 @@ exports.changedFiles = exports.pullRequestLabels = exports.pullRequestPayload = 
 const github = __importStar(__nccwpck_require__(5438));
 const core_1 = __nccwpck_require__(6762);
 const plugin_paginate_rest_1 = __nccwpck_require__(4193);
+const core = __importStar(__nccwpck_require__(2186));
 function isPullRequest(eventName, payload) {
     return eventName === "pull_request";
 }
@@ -11651,7 +11652,9 @@ exports.pullRequestLabels = pullRequestLabels;
  */
 async function changedFiles(payload) {
     const MyOctokit = core_1.Octokit.plugin(plugin_paginate_rest_1.paginateRest);
-    const octokit = new MyOctokit(); // Anonymous to avoid asking for an access token.
+    // Get the token from the inputs
+    const token = core.getInput("token");
+    const octokit = token ? new MyOctokit({ auth: token }) : new MyOctokit();
     return await octokit.paginate("GET /repos/{owner}/{repo}/pulls/{pull_number}/files", {
         owner: payload.repository.owner.login,
         repo: payload.repository.name,
