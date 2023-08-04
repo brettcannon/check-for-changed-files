@@ -41,6 +41,11 @@ The message to emit when the check fails. All other inputs can be specified in
 the message using `${}` syntax, e.g. `${file-pattern}` for the `file-pattern`
 input. All values will be quoted for easy identification of any whitespace.
 
+### `token`
+
+A GitHub auth token to use for private repositories. Falls back to anonymous access if
+not provided. Usually you want to use `${{ secrets.GITHUB_TOKEN }}` for this.
+
 ## Example usage (for requiring a news entry file)
 
 E.g. for use with [scriv](https://scriv.readthedocs.io/):
