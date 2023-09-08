@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install node
         uses: actions/setup-node@v3
         with:
@@ -28,7 +28,7 @@ jobs:
     name: Dogfood the action
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3 # To run the version of the action from the PR.
+      - uses: actions/checkout@v4 # To run the version of the action from the PR.
 
       - name: package*.json updated
         uses: ./
