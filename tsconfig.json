@@ -1,9 +1,8 @@
 {
-  "extends": "@tsconfig/node16/tsconfig.json",
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "preserveConstEnums": true,
-    "outDir": "out",
-    "moduleResolution": "node"
+    "outDir": "out"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.test.ts"]
