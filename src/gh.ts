@@ -1,14 +1,24 @@
 import * as github from "@actions/github";
 import { Octokit } from "@octokit/core";
 import { paginateRest } from "@octokit/plugin-paginate-rest";
-import { EventPayloads } from "@octokit/webhooks";
 import * as core from "@actions/core";
 
-function isPullRequest(
-  eventName: string,
-  payload: typeof github.context.payload
-): payload is EventPayloads.WebhookPayloadPullRequest {
-  return eventName === "pull_request";
+/**
+ * The payload of a pull request event.
+ *
+ * Declared explicitly to make TypeScript happy and to avoid unnecessary undefined checks.
+ */
+interface PullRequestEvent {
+  repository: {
+    owner: {
+      login: string;
+    };
+    name: string;
+  };
+  pull_request: {
+    number: number;
+    labels: [{ name: string }];
+  };
 }
 
 /**
@@ -16,11 +26,14 @@ function isPullRequest(
  *
  * Returns `undefined` if the context is anything but a PR.
  */
-export function pullRequestPayload():
-  | EventPayloads.WebhookPayloadPullRequest
-  | undefined {
-  if (isPullRequest(github.context.eventName, github.context.payload)) {
-    return github.context.payload;
+export function pullRequestPayload(): PullRequestEvent | undefined {
+  if (
+    github.context.eventName === "pull_request" &&
+    github.context.payload !== undefined &&
+    github.context.payload.pull_request !== undefined &&
+    github.context.payload.repository !== undefined
+  ) {
+    return github.context.payload as PullRequestEvent;
   }
   return undefined;
 }
@@ -28,17 +41,21 @@ export function pullRequestPayload():
 /**
  * Get the labels of the PR.
  */
-export function pullRequestLabels(
-  payload: EventPayloads.WebhookPayloadPullRequest
-): string[] {
-  return payload.pull_request.labels.map((labelData) => labelData.name);
+export function pullRequestLabels(payload: PullRequestEvent): string[] {
+  interface LabelData {
+    name: string;
+  }
+
+  return payload.pull_request.labels.map(
+    (labelData: LabelData) => labelData.name
+  );
 }
 
 /**
  * Fetch the list of changed files in the PR.
  */
 export async function changedFiles(
-  payload: EventPayloads.WebhookPayloadPullRequest
+  payload: PullRequestEvent
 ): Promise<string[]> {
   const MyOctokit = Octokit.plugin(paginateRest);
 

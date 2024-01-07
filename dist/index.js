@@ -33624,16 +33624,16 @@ const github = __importStar(__nccwpck_require__(5438));
 const core_1 = __nccwpck_require__(6762);
 const plugin_paginate_rest_1 = __nccwpck_require__(4193);
 const core = __importStar(__nccwpck_require__(2186));
-function isPullRequest(eventName, payload) {
-    return eventName === "pull_request";
-}
 /**
  * Check if `github.context.payload` is from a PR, returning it as the appropriate type.
  *
  * Returns `undefined` if the context is anything but a PR.
  */
 function pullRequestPayload() {
-    if (isPullRequest(github.context.eventName, github.context.payload)) {
+    if (github.context.eventName === "pull_request" &&
+        github.context.payload !== undefined &&
+        github.context.payload.pull_request !== undefined &&
+        github.context.payload.repository !== undefined) {
         return github.context.payload;
     }
     return undefined;
