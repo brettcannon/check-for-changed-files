@@ -7,20 +7,33 @@ test("gh.pullRequestEvent() return undefined by default", () => {
 });
 
 describe("Stub github.context w/ a pull_request payload", () => {
+  const context = {
+    eventName: "pull_request",
+    payload: {
+      pull_request: { number: 42 },
+      repository: { name: "test", owner: { login: "anonymous" } },
+    },
+  };
+
   beforeEach(() => {
-    const context = { eventName: "pull_request", payload: { number: 42 } };
     ImportMock.mockOther(github, "context", context);
   });
   afterEach(() => ImportMock.restore());
 
   test("pull_request context is returned by gh.pullRequestEvent()", () => {
-    expect(gh.pullRequestPayload()).toEqual({ number: 42 });
+    expect(gh.pullRequestPayload()).toEqual(context.payload);
   });
 });
 
 describe("Stub github.context w/ a 'push' payload", () => {
+  const context = {
+    eventName: "push",
+    payload: {
+      pull_request: { number: 42 },
+      repository: { name: "test", owner: { login: "anonymous" } },
+    },
+  };
   beforeEach(() => {
-    const context = { eventName: "push", payload: { number: 42 } };
     ImportMock.mockOther(github, "context", context);
   });
   afterEach(() => ImportMock.restore());
