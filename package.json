@@ -10,7 +10,7 @@
     "lint-fix": "eslint --fix --ext .ts src",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
-    "package": "ncc build src/index.ts --out dist --source-map --license licenses.txt",
+    "package": "ncc build src/index.mjs --out dist --source-map --license licenses.txt",
     "all": "npm run build && npm run test && npm run lint-fix && npm run format && npm run package"
   },
   "repository": {

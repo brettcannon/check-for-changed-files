@@ -10,10 +10,10 @@ export const defaultPrereqPattern = "**";
  * then it is split and all lines are used to try to find a matching file path.
  */
 export function anyFileMatches(
-  filePaths: readonly string[],
-  pattern: string
-): boolean {
-  const patterns: readonly string[] = pattern
+  filePaths,
+  pattern
+) {
+  const patterns = pattern
     ? pattern.split("\n")
     : [defaultPrereqPattern];
 
@@ -26,6 +26,6 @@ export function anyFileMatches(
 /**
  * Check if the array of label names matches the specified skip label.
  */
-export function hasLabelMatch(labels: string[], skipLabel: string): boolean {
+export function hasLabelMatch(labels, skipLabel) {
   return labels.includes(skipLabel);
 }
