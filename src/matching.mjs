@@ -9,13 +9,8 @@ export const defaultPrereqPattern = "**";
  * If `pattern` is falsy then `defaultPrereqPattern` is used. If `pattern` is multi-line,
  * then it is split and all lines are used to try to find a matching file path.
  */
-export function anyFileMatches(
-  filePaths,
-  pattern
-) {
-  const patterns = pattern
-    ? pattern.split("\n")
-    : [defaultPrereqPattern];
+export function anyFileMatches(filePaths, pattern) {
+  const patterns = pattern ? pattern.split("\n") : [defaultPrereqPattern];
 
   return patterns.some((pattern) => {
     const regexp = minimatch.makeRe(pattern, { dot: true });

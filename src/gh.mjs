@@ -24,17 +24,13 @@ export function pullRequestPayload() {
  * Get the labels of the PR.
  */
 export function pullRequestLabels(payload) {
-  return payload.pull_request.labels.map(
-    (labelData) => labelData.name
-  );
+  return payload.pull_request.labels.map((labelData) => labelData.name);
 }
 
 /**
  * Fetch the list of changed files in the PR.
  */
-export async function changedFiles(
-  payload
-) {
+export async function changedFiles(payload) {
   const MyOctokit = Octokit.plugin(paginateRest);
 
   // Get the token from the inputs
