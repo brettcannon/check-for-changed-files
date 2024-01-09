@@ -1,3 +1,4 @@
+import { describe, expect, test } from "vitest";
 import * as main from "../src/main";
 
 describe("repr()", () => {
