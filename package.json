@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test": "vitest",
+    "test": "vitest run",
+    "test-watch": "vitest",
     "lint": "eslint --ext .mjs src",
     "lint-fix": "eslint --fix --ext .mjs src",
     "format": "prettier --write .",
