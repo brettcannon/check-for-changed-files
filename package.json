@@ -14,7 +14,7 @@
     "lint-fix": "eslint --fix --ext .mjs src",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
-    "package": "ncc build src/index.mjs --out dist --minify --source-map --license licenses.txt",
+    "package": "esbuild src/index.mjs --outfile=dist/index.js --bundle --platform=node --target=node20",
     "all": "npm run test && npm run lint-fix && npm run format && npm run package"
   },
   "repository": {
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/brettcannon/check-for-changed-files#readme",
   "devDependencies": {
-    "@vercel/ncc": "^0.38.1",
+    "esbuild": "^0.20.2",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",
     "prettier": "^2.8.8",
