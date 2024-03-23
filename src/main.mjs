@@ -1,25 +1,25 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import * as gh from "./gh";
-import * as matching from "./matching";
+import * as gh from "./gh.mjs";
+import * as matching from "./matching.mjs";
 
-export function repr(str: string): string {
+export function repr(str) {
   return JSON.stringify(str);
 }
 
 export function formatFailureMessage(
-  template: string,
-  prereqPattern: string,
-  filePattern: string,
-  skipLabel: string
-): string {
+  template,
+  prereqPattern,
+  filePattern,
+  skipLabel
+) {
   return template
     .replace("${prereq-pattern}", repr(prereqPattern))
     .replace("${file-pattern}", repr(filePattern))
     .replace("${skip-label}", repr(skipLabel));
 }
 
-export async function main(): Promise<void> {
+export async function main() {
   try {
     const payload = gh.pullRequestPayload();
     if (payload === undefined) {

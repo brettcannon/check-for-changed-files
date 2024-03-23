@@ -1,11 +1,15 @@
 {
   "root": true,
-  "parser": "@typescript-eslint/parser",
-  "plugins": ["jest", "@typescript-eslint"],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier"
-  ],
-  "env": { "node": true, "jest/globals": true }
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2023, // https://node.green/#ES2023
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
+  },
+  "extends": ["eslint:recommended", "prettier"],
+  "env": {
+    "node": true,
+    "es2023": true // https://node.green/#ES2023
+  }
 }
