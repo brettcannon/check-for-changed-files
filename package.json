@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/brettcannon/check-for-changed-files#readme",
   "devDependencies": {
-    "@vercel/ncc": "^0.36.1",
+    "@vercel/ncc": "^0.38.1",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^8.10.0",
     "prettier": "^2.8.8",
