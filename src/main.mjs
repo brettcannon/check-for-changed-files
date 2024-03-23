@@ -1,7 +1,7 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import * as gh from "./gh";
-import * as matching from "./matching";
+import * as gh from "./gh.mjs";
+import * as matching from "./matching.mjs";
 
 export function repr(str) {
   return JSON.stringify(str);
