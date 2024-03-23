@@ -2,7 +2,7 @@
   "name": "check-for-changed-files",
   "version": "1.1.0",
   "description": "GitHub Action to check for required changed files in a PR",
-  "main": "dist/index.mjs",
+  "main": "dist/index.js",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
@@ -14,7 +14,7 @@
     "lint-fix": "eslint --fix --ext .mjs src",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
-    "package": "esbuild src/index.mjs --outfile=dist/index.mjs --bundle --platform=node --target=node20",
+    "package": "esbuild src/index.mjs --outfile=dist/index.js --bundle --platform=node --target=node20",
     "all": "npm run test && npm run lint-fix && npm run format && npm run package"
   },
   "repository": {
