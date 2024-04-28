@@ -25957,7 +25957,7 @@ async function main() {
       return;
     }
     const filePaths = await changedFiles(payload);
-    const prereqPattern = core2.getInput("prereq-pattern") || void 0;
+    const prereqPattern = core2.getInput("prereq-pattern");
     if (!anyFileMatches(filePaths, prereqPattern)) {
       core2.info(
         `the prerequisite ${repr(

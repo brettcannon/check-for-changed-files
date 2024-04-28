@@ -39,8 +39,7 @@ export async function main() {
     }
 
     const filePaths = await gh.changedFiles(payload);
-    const prereqPattern =
-      core.getInput("prereq-pattern") || matching.defaultPrereqPattern;
+    const prereqPattern = core.getInput("prereq-pattern");
     if (!matching.anyFileMatches(filePaths, prereqPattern)) {
       core.info(
         `the prerequisite ${repr(
