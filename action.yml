@@ -12,6 +12,7 @@ inputs:
   prereq-pattern:
     description: "Glob pattern that guards whether the action will run"
     required: false
+    default: "**"
   skip-label:
     description: "Label to trigger skipping the check"
     required: false

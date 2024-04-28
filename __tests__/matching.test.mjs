@@ -1,12 +1,14 @@
 import { describe, expect, test } from "vitest";
 import * as matching from "../src/matching";
 
+const defaultPrereqPattern = "**";
+
 describe("anyFileMatches()", () => {
   test("default prerequisite pattern for top-level files", () => {
     const filePaths = ["package-lock.json", "package.json", "README.md"];
 
     expect(
-      matching.anyFileMatches(filePaths, matching.defaultPrereqPattern)
+      matching.anyFileMatches(filePaths, defaultPrereqPattern)
     ).toBeTruthy();
   });
 
@@ -14,7 +16,7 @@ describe("anyFileMatches()", () => {
     const filePaths = ["src/index.ts"];
 
     expect(
-      matching.anyFileMatches(filePaths, matching.defaultPrereqPattern)
+      matching.anyFileMatches(filePaths, defaultPrereqPattern)
     ).toBeTruthy();
   });
 
@@ -22,7 +24,7 @@ describe("anyFileMatches()", () => {
     const filePaths = [".github/workflows/pull-request.yml"];
 
     expect(
-      matching.anyFileMatches(filePaths, matching.defaultPrereqPattern)
+      matching.anyFileMatches(filePaths, defaultPrereqPattern)
     ).toBeTruthy();
   });
 
