@@ -25921,9 +25921,8 @@ async function changedFiles(payload) {
 
 // src/matching.mjs
 var minimatch = __toESM(require_minimatch(), 1);
-var defaultPrereqPattern = "**";
 function anyFileMatches(filePaths, pattern) {
-  const patterns = pattern ? pattern.split("\n") : [defaultPrereqPattern];
+  const patterns = pattern.split("\n");
   return patterns.some((pattern2) => {
     const regexp = minimatch.makeRe(pattern2, { dot: true });
     return filePaths.some((val) => regexp.test(val));
@@ -25958,7 +25957,7 @@ async function main() {
       return;
     }
     const filePaths = await changedFiles(payload);
-    const prereqPattern = core2.getInput("prereq-pattern") || defaultPrereqPattern;
+    const prereqPattern = core2.getInput("prereq-pattern") || void 0;
     if (!anyFileMatches(filePaths, prereqPattern)) {
       core2.info(
         `the prerequisite ${repr(

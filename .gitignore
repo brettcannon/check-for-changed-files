@@ -104,3 +104,7 @@ typings/
 
 # Files built by tsc
 out/
+
+/lib/
+.bsb.lock
+**/*.res.mjs
