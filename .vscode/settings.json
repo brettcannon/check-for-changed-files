@@ -14,5 +14,6 @@
   "[yaml]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "rescript.settings.askToStartBuild": false
 }

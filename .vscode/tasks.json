@@ -19,7 +19,10 @@
 				"panel": "shared",
 				"showReuseMessage": true,
 				"clear": false
-			}
+			},
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
 		}
 	]
 }
