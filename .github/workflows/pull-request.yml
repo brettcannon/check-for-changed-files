@@ -47,6 +47,6 @@ jobs:
       - name: dist/index.js updated
         uses: ./
         with:
-          prereq-pattern: "src/*.ts"
+          prereq-pattern: "src/*.mjs"
           file-pattern: "dist/index.js"
           skip-label: "skip packaging"
