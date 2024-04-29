@@ -1,25 +1,21 @@
-/**
- * Check if the array of label names matches the specified skip label.
- */
-let hasLabelMatch = (labels: array<string>, skipLabel: string) => {
-  labels->Array.indexOfOpt(skipLabel)->Option.isSome
-}
-
-%%raw(`
-import * as minimatch from "minimatch";
+@module("minimatch") external reFromGlob: (string, @as(json`{"dot": true}`) _) => Re.t = "makeRe"
 
 /**
  * Check if any of the file paths match the file glob pattern.
  *
- * If 'pattern' is falsy then 'defaultPrereqPattern' is used. If 'pattern' is multi-line,
- * then it is split and all lines are used to try to find a matching file path.
+ * If 'pattern' is multi-line, then it is split and all lines are used to try to find a
+ * matching file path.
  */
-export function anyFileMatches(filePaths, pattern) {
-  const patterns = pattern.split("\n");
+let anyFileMatches = (filePaths: array<string>, pattern: string) =>
+  pattern
+  ->String.split("\n")
+  ->Array.some(pattern => {
+    let regexp = reFromGlob(pattern)
+    filePaths->Array.some(val => regexp->Re.test(val))
+  })
 
-  return patterns.some((pattern) => {
-    const regexp = minimatch.makeRe(pattern, { dot: true });
-    return filePaths.some((val) => regexp.test(val));
-  });
-}
-`)
+/**
+ * Check if the array of label names matches the specified skip label.
+ */
+let hasLabelMatch = (labels: array<string>, skipLabel: string) =>
+  labels->Array.indexOfOpt(skipLabel)->Option.isSome

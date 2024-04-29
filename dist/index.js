@@ -25298,8 +25298,8 @@ var require_brace_expansion = __commonJS({
 // node_modules/minimatch/minimatch.js
 var require_minimatch = __commonJS({
   "node_modules/minimatch/minimatch.js"(exports2, module2) {
-    module2.exports = minimatch2;
-    minimatch2.Minimatch = Minimatch;
+    module2.exports = minimatch;
+    minimatch.Minimatch = Minimatch2;
     var path = function() {
       try {
         return require("path");
@@ -25308,8 +25308,8 @@ var require_minimatch = __commonJS({
     }() || {
       sep: "/"
     };
-    minimatch2.sep = path.sep;
-    var GLOBSTAR = minimatch2.GLOBSTAR = Minimatch.GLOBSTAR = {};
+    minimatch.sep = path.sep;
+    var GLOBSTAR = minimatch.GLOBSTAR = Minimatch2.GLOBSTAR = {};
     var expand = require_brace_expansion();
     var plTypes = {
       "!": { open: "(?:(?!(?:", close: "))[^/]*?)" },
@@ -25330,11 +25330,11 @@ var require_minimatch = __commonJS({
       }, {});
     }
     var slashSplit = /\/+/;
-    minimatch2.filter = filter;
+    minimatch.filter = filter;
     function filter(pattern, options) {
       options = options || {};
       return function(p, i, list) {
-        return minimatch2(p, pattern, options);
+        return minimatch(p, pattern, options);
       };
     }
     function ext(a, b) {
@@ -25348,15 +25348,15 @@ var require_minimatch = __commonJS({
       });
       return t;
     }
-    minimatch2.defaults = function(def) {
+    minimatch.defaults = function(def) {
       if (!def || typeof def !== "object" || !Object.keys(def).length) {
-        return minimatch2;
+        return minimatch;
       }
-      var orig = minimatch2;
-      var m = function minimatch3(p, pattern, options) {
+      var orig = minimatch;
+      var m = function minimatch2(p, pattern, options) {
         return orig(p, pattern, ext(def, options));
       };
-      m.Minimatch = function Minimatch2(pattern, options) {
+      m.Minimatch = function Minimatch3(pattern, options) {
         return new orig.Minimatch(pattern, ext(def, options));
       };
       m.Minimatch.defaults = function defaults(options) {
@@ -25379,21 +25379,21 @@ var require_minimatch = __commonJS({
       };
       return m;
     };
-    Minimatch.defaults = function(def) {
-      return minimatch2.defaults(def).Minimatch;
+    Minimatch2.defaults = function(def) {
+      return minimatch.defaults(def).Minimatch;
     };
-    function minimatch2(p, pattern, options) {
+    function minimatch(p, pattern, options) {
       assertValidPattern(pattern);
       if (!options)
         options = {};
       if (!options.nocomment && pattern.charAt(0) === "#") {
         return false;
       }
-      return new Minimatch(pattern, options).match(p);
+      return new Minimatch2(pattern, options).match(p);
     }
-    function Minimatch(pattern, options) {
-      if (!(this instanceof Minimatch)) {
-        return new Minimatch(pattern, options);
+    function Minimatch2(pattern, options) {
+      if (!(this instanceof Minimatch2)) {
+        return new Minimatch2(pattern, options);
       }
       assertValidPattern(pattern);
       if (!options)
@@ -25412,9 +25412,9 @@ var require_minimatch = __commonJS({
       this.partial = !!options.partial;
       this.make();
     }
-    Minimatch.prototype.debug = function() {
+    Minimatch2.prototype.debug = function() {
     };
-    Minimatch.prototype.make = make;
+    Minimatch2.prototype.make = make;
     function make() {
       var pattern = this.pattern;
       var options = this.options;
@@ -25447,7 +25447,7 @@ var require_minimatch = __commonJS({
       this.debug(this.pattern, set);
       this.set = set;
     }
-    Minimatch.prototype.parseNegate = parseNegate;
+    Minimatch2.prototype.parseNegate = parseNegate;
     function parseNegate() {
       var pattern = this.pattern;
       var negate = false;
@@ -25463,13 +25463,13 @@ var require_minimatch = __commonJS({
         this.pattern = pattern.substr(negateOffset);
       this.negate = negate;
     }
-    minimatch2.braceExpand = function(pattern, options) {
+    minimatch.braceExpand = function(pattern, options) {
       return braceExpand(pattern, options);
     };
-    Minimatch.prototype.braceExpand = braceExpand;
+    Minimatch2.prototype.braceExpand = braceExpand;
     function braceExpand(pattern, options) {
       if (!options) {
-        if (this instanceof Minimatch) {
+        if (this instanceof Minimatch2) {
           options = this.options;
         } else {
           options = {};
@@ -25491,7 +25491,7 @@ var require_minimatch = __commonJS({
         throw new TypeError("pattern is too long");
       }
     };
-    Minimatch.prototype.parse = parse2;
+    Minimatch2.prototype.parse = parse2;
     var SUBPARSE = {};
     function parse2(pattern, isSub) {
       assertValidPattern(pattern);
@@ -25725,10 +25725,10 @@ var require_minimatch = __commonJS({
       regExp._src = re;
       return regExp;
     }
-    minimatch2.makeRe = function(pattern, options) {
-      return new Minimatch(pattern, options || {}).makeRe();
+    minimatch.makeRe = function(pattern, options) {
+      return new Minimatch2(pattern, options || {}).makeRe();
     };
-    Minimatch.prototype.makeRe = makeRe2;
+    Minimatch2.prototype.makeRe = makeRe2;
     function makeRe2() {
       if (this.regexp || this.regexp === false)
         return this.regexp;
@@ -25755,9 +25755,9 @@ var require_minimatch = __commonJS({
       }
       return this.regexp;
     }
-    minimatch2.match = function(list, pattern, options) {
+    minimatch.match = function(list, pattern, options) {
       options = options || {};
-      var mm = new Minimatch(pattern, options);
+      var mm = new Minimatch2(pattern, options);
       list = list.filter(function(f) {
         return mm.match(f);
       });
@@ -25766,7 +25766,7 @@ var require_minimatch = __commonJS({
       }
       return list;
     };
-    Minimatch.prototype.match = function match(f, partial) {
+    Minimatch2.prototype.match = function match(f, partial) {
       if (typeof partial === "undefined")
         partial = this.partial;
       this.debug("match", f, this.pattern);
@@ -25808,7 +25808,7 @@ var require_minimatch = __commonJS({
         return false;
       return this.negate;
     };
-    Minimatch.prototype.matchOne = function(file, pattern, partial) {
+    Minimatch2.prototype.matchOne = function(file, pattern, partial) {
       var options = this.options;
       this.debug(
         "matchOne",
@@ -25919,6 +25919,9 @@ async function changedFiles(payload) {
   );
 }
 
+// src/Matching.res.mjs
+var Minimatch = __toESM(require_minimatch(), 1);
+
 // node_modules/@rescript/core/src/Core__Array.res.mjs
 function indexOfOpt(arr, item) {
   var index = arr.indexOf(item);
@@ -25933,16 +25936,16 @@ function isSome(x) {
 }
 
 // src/Matching.res.mjs
-var minimatch = __toESM(require_minimatch(), 1);
+function anyFileMatches(filePaths, pattern) {
+  return pattern.split("\n").some(function(pattern2) {
+    var regexp = Minimatch.makeRe(pattern2, { "dot": true });
+    return filePaths.some(function(val) {
+      return regexp.test(val);
+    });
+  });
+}
 function hasLabelMatch(labels, skipLabel) {
   return isSome(indexOfOpt(labels, skipLabel));
-}
-function anyFileMatches(filePaths, pattern) {
-  const patterns = pattern.split("\n");
-  return patterns.some((pattern2) => {
-    const regexp = minimatch.makeRe(pattern2, { dot: true });
-    return filePaths.some((val) => regexp.test(val));
-  });
 }
 
 // src/main.mjs
