@@ -1,3 +1,10 @@
+/**
+ * Check if the array of label names matches the specified skip label.
+ */
+let hasLabelMatch = (labels: array<string>, skipLabel: string) => {
+  labels->Array.indexOfOpt(skipLabel)->Option.isSome
+}
+
 %%raw(`
 import * as minimatch from "minimatch";
 
@@ -14,12 +21,5 @@ export function anyFileMatches(filePaths, pattern) {
     const regexp = minimatch.makeRe(pattern, { dot: true });
     return filePaths.some((val) => regexp.test(val));
   });
-}
-
-/**
- * Check if the array of label names matches the specified skip label.
- */
-export function hasLabelMatch(labels, skipLabel) {
-  return labels.includes(skipLabel);
 }
 `)

@@ -4440,10 +4440,10 @@ var require_webidl = __commonJS({
         return V?.[Symbol.toStringTag] === I.prototype[Symbol.toStringTag];
       }
     };
-    webidl.argumentLengthCheck = function({ length }, min, ctx) {
-      if (length < min) {
+    webidl.argumentLengthCheck = function({ length }, min2, ctx) {
+      if (length < min2) {
         throw webidl.errors.exception({
-          message: `${min} argument${min !== 1 ? "s" : ""} required, but${length ? " only" : ""} ${length} found.`,
+          message: `${min2} argument${min2 !== 1 ? "s" : ""} required, but${length ? " only" : ""} ${length} found.`,
           ...ctx
         });
       }
@@ -25919,17 +25919,30 @@ async function changedFiles(payload) {
   );
 }
 
+// node_modules/@rescript/core/src/Core__Array.res.mjs
+function indexOfOpt(arr, item) {
+  var index = arr.indexOf(item);
+  if (index !== -1) {
+    return index;
+  }
+}
+
+// node_modules/@rescript/core/src/Core__Option.res.mjs
+function isSome(x) {
+  return x !== void 0;
+}
+
 // src/Matching.res.mjs
 var minimatch = __toESM(require_minimatch(), 1);
+function hasLabelMatch(labels, skipLabel) {
+  return isSome(indexOfOpt(labels, skipLabel));
+}
 function anyFileMatches(filePaths, pattern) {
   const patterns = pattern.split("\n");
   return patterns.some((pattern2) => {
     const regexp = minimatch.makeRe(pattern2, { dot: true });
     return filePaths.some((val) => regexp.test(val));
   });
-}
-function hasLabelMatch(labels, skipLabel) {
-  return labels.includes(skipLabel);
 }
 
 // src/main.mjs
