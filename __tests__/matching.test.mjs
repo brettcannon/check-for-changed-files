@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import * as matching from "../src/matching";
+import * as matching from "../src/Matching.res.mjs";
 
 const defaultPrereqPattern = "**";
 
