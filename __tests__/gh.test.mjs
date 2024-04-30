@@ -8,7 +8,7 @@ import {
   test,
   vi,
 } from "vitest";
-import * as gh from "../src/gh";
+import * as gh from "../src/GH.res.mjs";
 
 test("gh.pullRequestEvent() return undefined by default", () => {
   expect(gh.pullRequestPayload()).toBeUndefined();

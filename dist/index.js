@@ -25889,7 +25889,7 @@ var require_minimatch = __commonJS({
 var core2 = __toESM(require_core(), 1);
 var github2 = __toESM(require_github(), 1);
 
-// src/gh.mjs
+// src/GH.res.mjs
 var github = __toESM(require_github(), 1);
 var import_core = __toESM(require_dist_node8(), 1);
 var import_plugin_paginate_rest = __toESM(require_dist_node10(), 1);

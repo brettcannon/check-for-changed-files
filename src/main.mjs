@@ -1,6 +1,6 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import * as gh from "./gh.mjs";
+import * as gh from "./GH.res.mjs";
 import * as matching from "./Matching.res.mjs";
 
 export function repr(str) {
