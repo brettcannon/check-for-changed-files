@@ -1,8 +1,10 @@
 /* TODO
-  - Isolate %raw() code into its own function
+  - Isolate %raw() code into its own function so its more isolated/obvious
   - Wrap getInput() into a function that returns option<string>
-  - Type the payload
-  - Type context?
+  - Type `context`/contextType so that the "pull_request" and "repository" are optional, but not subfields
+  - Type the pullRequestPayloadType so that "pull_request" and "repository" are required
+  - pullRequestPayload() return `option<pullRequestPayloadType>`
+  - Type paginate() better
  */
 
 @module("@actions/github") external context: 'whatever = "context"
