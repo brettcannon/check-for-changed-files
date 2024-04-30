@@ -1,32 +1,35 @@
-%%raw(`
-import * as github from "@actions/github";
-import { Octokit } from "@octokit/core";
-import { paginateRest } from "@octokit/plugin-paginate-rest";
-import * as core from "@actions/core";
+@module("@actions/github") external context: 'whatever = "context"
 
 /**
  * Check if 'github.context.payload' is from a PR, returning it as the appropriate type.
  *
  * Returns 'undefined' if the context is anything but a PR.
  */
-export function pullRequestPayload() {
+let pullRequestPayload = () => {
   if (
-    github.context.eventName === "pull_request" &&
-    github.context.payload !== undefined &&
-    github.context.payload.pull_request !== undefined &&
-    github.context.payload.repository !== undefined
+    context["eventName"] == "pull_request" &&
+    context["payload"] != Nullable.undefined &&
+    context["payload"]["pull_request"] != Nullable.undefined &&
+    context["payload"]["repository"] != Nullable.undefined
   ) {
-    return github.context.payload;
+    // TODO: Can return a specific pullRequestPayloadType to avoid deeply nested option access.
+    context["payload"]
+  } else {
+    None
   }
-  return undefined;
 }
 
 /**
  * Get the labels of the PR.
  */
-export function pullRequestLabels(payload) {
-  return payload.pull_request.labels.map((labelData) => labelData.name);
-}
+let pullRequestLabels = payload =>
+  payload["pull_request"]["labels"]->Array.map(labelData => labelData["name"])
+
+// TODO: consider doing an octokit FFI function as the dynamism is so extreme it's hard to model.
+%%raw(`
+import { Octokit } from "@octokit/core";
+import { paginateRest } from "@octokit/plugin-paginate-rest";
+import * as core from "@actions/core";
 
 /**
  * Fetch the list of changed files in the PR.

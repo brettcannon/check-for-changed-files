@@ -25887,21 +25887,22 @@ var require_minimatch = __commonJS({
 
 // src/main.mjs
 var core2 = __toESM(require_core(), 1);
-var github2 = __toESM(require_github(), 1);
+var github = __toESM(require_github(), 1);
 
 // src/GH.res.mjs
-var github = __toESM(require_github(), 1);
+var Github = __toESM(require_github(), 1);
 var import_core = __toESM(require_dist_node8(), 1);
 var import_plugin_paginate_rest = __toESM(require_dist_node10(), 1);
 var core = __toESM(require_core(), 1);
 function pullRequestPayload() {
-  if (github.context.eventName === "pull_request" && github.context.payload !== void 0 && github.context.payload.pull_request !== void 0 && github.context.payload.repository !== void 0) {
-    return github.context.payload;
+  if (Github.context.eventName === "pull_request" && Github.context.payload !== void 0 && Github.context.payload.pull_request !== void 0 && Github.context.payload.repository !== void 0) {
+    return Github.context.payload;
   }
-  return void 0;
 }
 function pullRequestLabels(payload) {
-  return payload.pull_request.labels.map((labelData) => labelData.name);
+  return payload.pull_request.labels.map(function(labelData) {
+    return labelData.name;
+  });
 }
 async function changedFiles(payload) {
   const MyOctokit = import_core.Octokit.plugin(import_plugin_paginate_rest.paginateRest);
@@ -25961,7 +25962,7 @@ async function main() {
     if (payload === void 0) {
       core2.info(
         `${repr(
-          github2.context.eventName
+          github.context.eventName
         )} is not a pull request event; skipping`
       );
       return;
