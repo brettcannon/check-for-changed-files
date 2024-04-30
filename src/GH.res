@@ -1,3 +1,10 @@
+/* TODO
+  - Isolate %raw() code into its own function
+  - Wrap getInput() into a function that returns option<string>
+  - Type the payload
+  - Type context?
+ */
+
 @module("@actions/github") external context: 'whatever = "context"
 @module("@actions/core") external getInput: string => string = "getInput"
 @send external paginate: ('a, 'b, 'c, 'd) => promise<array<string>> = "paginate"

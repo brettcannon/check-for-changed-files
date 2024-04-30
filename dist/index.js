@@ -25885,6 +25885,13 @@ var require_minimatch = __commonJS({
   }
 });
 
+// src/Index.res.mjs
+var Index_res_exports = {};
+__export(Index_res_exports, {
+  main: () => main2
+});
+module.exports = __toCommonJS(Index_res_exports);
+
 // src/main.mjs
 var core = __toESM(require_core(), 1);
 var github = __toESM(require_github(), 1);
@@ -26005,8 +26012,15 @@ async function main() {
   }
 }
 
-// src/index.mjs
+// src/Index.res.mjs
+function main2(prim) {
+  main();
+}
 main();
+// Annotate the CommonJS export names for ESM import in node:
+0 && (module.exports = {
+  main
+});
 /*! Bundled license information:
 
 undici/lib/fetch/body.js:
