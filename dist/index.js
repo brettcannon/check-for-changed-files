@@ -25892,7 +25892,7 @@ __export(Index_res_exports, {
 });
 module.exports = __toCommonJS(Index_res_exports);
 
-// src/main.mjs
+// src/Main.res.mjs
 var core = __toESM(require_core(), 1);
 var github = __toESM(require_github(), 1);
 
@@ -25955,7 +25955,7 @@ function hasLabelMatch(labels, skipLabel) {
   return isSome(indexOfOpt(labels, skipLabel));
 }
 
-// src/main.mjs
+// src/Main.res.mjs
 function repr(str) {
   return JSON.stringify(str);
 }
@@ -25966,35 +25966,31 @@ async function main() {
   try {
     const payload = pullRequestPayload();
     if (payload === void 0) {
-      core.info(
-        `${repr(
-          github.context.eventName
-        )} is not a pull request event; skipping`
-      );
+      core.info(repr(github.context.eventName) + " is not a pull request event; skipping");
       return;
     }
     const skipLabel = core.getInput("skip-label");
     const prLabels = pullRequestLabels(payload);
     if (hasLabelMatch(prLabels, skipLabel)) {
-      core.info(`the skip label ${repr(skipLabel)} is set`);
+      core.info("the skip label " + repr(skipLabel) + " is set");
       return;
     }
     const filePaths = await changedFiles(payload);
     const prereqPattern = core.getInput("prereq-pattern");
     if (!anyFileMatches(filePaths, prereqPattern)) {
       core.info(
-        `the prerequisite ${repr(
+        "the prerequisite " + repr(
           prereqPattern
-        )} file pattern did not match any changed files of the pull request`
+        ) + " file pattern did not match any changed files of the pull request"
       );
       return;
     }
     const filePattern = core.getInput("file-pattern", { required: true });
     if (anyFileMatches(filePaths, filePattern)) {
       core.info(
-        `the ${repr(
+        "the " + repr(
           filePattern
-        )} file pattern matched the changed files of the pull request`
+        ) + " file pattern matched the changed files of the pull request"
       );
       return;
     }
@@ -26008,7 +26004,7 @@ async function main() {
       )
     );
   } catch (error) {
-    core.setFailed(`Action failed with error ${error}`);
+    core.setFailed("Action failed with error " + error);
   }
 }
 

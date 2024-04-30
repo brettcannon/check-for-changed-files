@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import * as main from "../src/main";
+import * as main from "../src/Main.res.mjs";
 
 describe("repr()", () => {
   test("output quotes strings", () => {

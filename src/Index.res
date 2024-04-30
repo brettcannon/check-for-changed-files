@@ -1,3 +1,3 @@
-@module("./main.mjs") external main: unit => unit = "main"
+@module("./Main.res.mjs") external main: unit => unit = "main"
 
 main()
