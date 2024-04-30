@@ -1,24 +1,22 @@
+/**
+ Get a quoted version of a string.
+ */
+let repr = str => JSON.Encode.string(str)->JSON.stringify
+
+/**
+ Format a failure message based on the template provided.
+ */
+let formatFailureMessage = (template, prereqPattern, filePattern, skipLabel) =>
+  template
+  ->String.replaceAll("${prereq-pattern}", repr(prereqPattern))
+  ->String.replaceAll("${file-pattern}", repr(filePattern))
+  ->String.replaceAll("${skip-label}", repr(skipLabel))
+
 %%raw(`
 import * as core from "@actions/core";
 import * as github from "@actions/github";
 import * as gh from "./GH.res.mjs";
 import * as matching from "./Matching.res.mjs";
-
-export function repr(str) {
-  return JSON.stringify(str);
-}
-
-export function formatFailureMessage(
-  template,
-  prereqPattern,
-  filePattern,
-  skipLabel
-) {
-  return template
-    .replace("\${prereq-pattern}", repr(prereqPattern))
-    .replace("\${file-pattern}", repr(filePattern))
-    .replace("\${skip-label}", repr(skipLabel));
-}
 
 export async function main() {
   try {

@@ -25960,7 +25960,7 @@ function repr(str) {
   return JSON.stringify(str);
 }
 function formatFailureMessage(template, prereqPattern, filePattern, skipLabel) {
-  return template.replace("${prereq-pattern}", repr(prereqPattern)).replace("${file-pattern}", repr(filePattern)).replace("${skip-label}", repr(skipLabel));
+  return template.replaceAll("${prereq-pattern}", JSON.stringify(prereqPattern)).replaceAll("${file-pattern}", JSON.stringify(filePattern)).replaceAll("${skip-label}", JSON.stringify(skipLabel));
 }
 async function main() {
   try {
