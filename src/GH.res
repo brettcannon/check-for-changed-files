@@ -1,4 +1,12 @@
 @module("@actions/github") external context: 'whatever = "context"
+@module("@actions/core") external getInput: string => string = "getInput"
+@send external paginate: ('a, 'b, 'c, 'd) => promise<array<string>> = "paginate"
+// Imports used only inside %raw calls; doing this in ReScript would cause the
+// compiler to drop the imports as unnecessary.
+%%raw(`
+import { Octokit } from "@octokit/core";
+import { paginateRest } from "@octokit/plugin-paginate-rest";
+`)
 
 /**
  * Check if 'github.context.payload' is from a PR, returning it as the appropriate type.
@@ -25,33 +33,24 @@ let pullRequestPayload = () => {
 let pullRequestLabels = payload =>
   payload["pull_request"]["labels"]->Array.map(labelData => labelData["name"])
 
-// TODO: consider doing an octokit FFI function as the dynamism is so extreme it's hard to model.
-%%raw(`
-import { Octokit } from "@octokit/core";
-import { paginateRest } from "@octokit/plugin-paginate-rest";
-import * as core from "@actions/core";
-
 /**
  * Fetch the list of changed files in the PR.
  */
-export async function changedFiles(payload) {
-  const MyOctokit = Octokit.plugin(paginateRest);
+let changedFiles = async payload => {
+  let octokit = switch getInput("token") {
+  | "" => %raw(`new Octokit.plugin(paginateRest)()`)
+  // While marked as ignored, `_token` is used inside the %raw() call.
+  | _token => %raw(`new Octokit.plugin(paginateRest)({ auth: _token })`)
+  }
 
-  // Get the token from the inputs
-  const token = core.getInput("token");
-
-  const octokit = token ? new MyOctokit({ auth: token }) : new MyOctokit();
-
-  return await octokit.paginate(
+  await octokit->paginate(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
     {
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      pull_number: payload.pull_request.number,
-      per_page: 100,
+      "owner": payload["repository"]["owner"]["login"],
+      "repo": payload["repository"]["name"],
+      "pull_number": payload["pull_request"]["number"],
+      "per_page": 100,
     },
-    (response) => response.data.map((fileData) => fileData.filename)
-  );
+    response => response["data"]->Array.map(fileData => fileData["filename"]),
+  )
 }
-
-`)

@@ -25886,14 +25886,14 @@ var require_minimatch = __commonJS({
 });
 
 // src/main.mjs
-var core2 = __toESM(require_core(), 1);
+var core = __toESM(require_core(), 1);
 var github = __toESM(require_github(), 1);
 
 // src/GH.res.mjs
+var Core = __toESM(require_core(), 1);
 var Github = __toESM(require_github(), 1);
 var import_core = __toESM(require_dist_node8(), 1);
 var import_plugin_paginate_rest = __toESM(require_dist_node10(), 1);
-var core = __toESM(require_core(), 1);
 function pullRequestPayload() {
   if (Github.context.eventName === "pull_request" && Github.context.payload !== void 0 && Github.context.payload.pull_request !== void 0 && Github.context.payload.repository !== void 0) {
     return Github.context.payload;
@@ -25905,19 +25905,18 @@ function pullRequestLabels(payload) {
   });
 }
 async function changedFiles(payload) {
-  const MyOctokit = import_core.Octokit.plugin(import_plugin_paginate_rest.paginateRest);
-  const token = core.getInput("token");
-  const octokit = token ? new MyOctokit({ auth: token }) : new MyOctokit();
-  return await octokit.paginate(
-    "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
-    {
-      owner: payload.repository.owner.login,
-      repo: payload.repository.name,
-      pull_number: payload.pull_request.number,
-      per_page: 100
-    },
-    (response) => response.data.map((fileData) => fileData.filename)
-  );
+  var _token = Core.getInput("token");
+  var octokit = _token === "" ? new import_core.Octokit.plugin(import_plugin_paginate_rest.paginateRest)() : new import_core.Octokit.plugin(import_plugin_paginate_rest.paginateRest)({ auth: _token });
+  return await octokit.paginate("GET /repos/{owner}/{repo}/pulls/{pull_number}/files", {
+    owner: payload.repository.owner.login,
+    repo: payload.repository.name,
+    pull_number: payload.pull_request.number,
+    per_page: 100
+  }, function(response) {
+    return response.data.map(function(fileData) {
+      return fileData.filename;
+    });
+  });
 }
 
 // src/Matching.res.mjs
@@ -25960,40 +25959,40 @@ async function main() {
   try {
     const payload = pullRequestPayload();
     if (payload === void 0) {
-      core2.info(
+      core.info(
         `${repr(
           github.context.eventName
         )} is not a pull request event; skipping`
       );
       return;
     }
-    const skipLabel = core2.getInput("skip-label");
+    const skipLabel = core.getInput("skip-label");
     const prLabels = pullRequestLabels(payload);
     if (hasLabelMatch(prLabels, skipLabel)) {
-      core2.info(`the skip label ${repr(skipLabel)} is set`);
+      core.info(`the skip label ${repr(skipLabel)} is set`);
       return;
     }
     const filePaths = await changedFiles(payload);
-    const prereqPattern = core2.getInput("prereq-pattern");
+    const prereqPattern = core.getInput("prereq-pattern");
     if (!anyFileMatches(filePaths, prereqPattern)) {
-      core2.info(
+      core.info(
         `the prerequisite ${repr(
           prereqPattern
         )} file pattern did not match any changed files of the pull request`
       );
       return;
     }
-    const filePattern = core2.getInput("file-pattern", { required: true });
+    const filePattern = core.getInput("file-pattern", { required: true });
     if (anyFileMatches(filePaths, filePattern)) {
-      core2.info(
+      core.info(
         `the ${repr(
           filePattern
         )} file pattern matched the changed files of the pull request`
       );
       return;
     }
-    const failureMessage = core2.getInput("failure-message");
-    core2.setFailed(
+    const failureMessage = core.getInput("failure-message");
+    core.setFailed(
       formatFailureMessage(
         failureMessage,
         prereqPattern,
@@ -26002,7 +26001,7 @@ async function main() {
       )
     );
   } catch (error) {
-    core2.setFailed(`Action failed with error ${error}`);
+    core.setFailed(`Action failed with error ${error}`);
   }
 }
 
