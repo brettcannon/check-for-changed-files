@@ -25892,10 +25892,6 @@ __export(Index_res_exports, {
 });
 module.exports = __toCommonJS(Index_res_exports);
 
-// src/Main.res.mjs
-var core = __toESM(require_core(), 1);
-var github = __toESM(require_github(), 1);
-
 // src/GH.res.mjs
 var Core = __toESM(require_core(), 1);
 var Github = __toESM(require_github(), 1);
@@ -25929,6 +25925,21 @@ async function changedFiles(payload) {
 // src/Matching.res.mjs
 var Minimatch = __toESM(require_minimatch(), 1);
 
+// node_modules/rescript/lib/es6/caml_option.js
+function valFromOption(x) {
+  if (!(x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== void 0)) {
+    return x;
+  }
+  var depth = x.BS_PRIVATE_NESTED_SOME_NONE;
+  if (depth === 0) {
+    return;
+  } else {
+    return {
+      BS_PRIVATE_NESTED_SOME_NONE: depth - 1 | 0
+    };
+  }
+}
+
 // node_modules/@rescript/core/src/Core__Array.res.mjs
 function indexOfOpt(arr, item) {
   var index = arr.indexOf(item);
@@ -25956,56 +25967,41 @@ function hasLabelMatch(labels, skipLabel) {
 }
 
 // src/Main.res.mjs
-function repr(str) {
-  return JSON.stringify(str);
-}
+var Core2 = __toESM(require_core(), 1);
+var Github2 = __toESM(require_github(), 1);
 function formatFailureMessage(template, prereqPattern, filePattern, skipLabel) {
   return template.replaceAll("${prereq-pattern}", JSON.stringify(prereqPattern)).replaceAll("${file-pattern}", JSON.stringify(filePattern)).replaceAll("${skip-label}", JSON.stringify(skipLabel));
 }
 async function main() {
-  try {
-    const payload = pullRequestPayload();
-    if (payload === void 0) {
-      core.info(repr(github.context.eventName) + " is not a pull request event; skipping");
-      return;
-    }
-    const skipLabel = core.getInput("skip-label");
-    const prLabels = pullRequestLabels(payload);
+  var payload = pullRequestPayload();
+  if (payload !== void 0) {
+    var payload$1 = valFromOption(payload);
+    var skipLabel = Core2.getInput("skip-label");
+    var prLabels = pullRequestLabels(payload$1);
     if (hasLabelMatch(prLabels, skipLabel)) {
-      core.info("the skip label " + repr(skipLabel) + " is set");
+      Core2.info("the skip label " + JSON.stringify(skipLabel) + " is set");
       return;
     }
-    const filePaths = await changedFiles(payload);
-    const prereqPattern = core.getInput("prereq-pattern");
-    if (!anyFileMatches(filePaths, prereqPattern)) {
-      core.info(
-        "the prerequisite " + repr(
-          prereqPattern
-        ) + " file pattern did not match any changed files of the pull request"
-      );
+    var filePaths = await changedFiles(payload$1);
+    var prereqPattern = Core2.getInput("prereq-pattern");
+    if (anyFileMatches(filePaths, prereqPattern)) {
+      var filePattern = Core2.getInput("file-pattern");
+      if (filePattern === "") {
+        Core2.setFailed("The 'file-pattern' input was not specified");
+        return;
+      }
+      if (anyFileMatches(filePaths, filePattern)) {
+        Core2.info("the " + JSON.stringify(filePattern) + " file pattern matched the changed files of the pull request");
+        return;
+      }
+      var failureMessage = Core2.getInput("failure-message");
+      Core2.setFailed(formatFailureMessage(failureMessage, prereqPattern, filePattern, skipLabel));
       return;
     }
-    const filePattern = core.getInput("file-pattern", { required: true });
-    if (anyFileMatches(filePaths, filePattern)) {
-      core.info(
-        "the " + repr(
-          filePattern
-        ) + " file pattern matched the changed files of the pull request"
-      );
-      return;
-    }
-    const failureMessage = core.getInput("failure-message");
-    core.setFailed(
-      formatFailureMessage(
-        failureMessage,
-        prereqPattern,
-        filePattern,
-        skipLabel
-      )
-    );
-  } catch (error) {
-    core.setFailed("Action failed with error " + error);
+    Core2.info("the prerequisite " + JSON.stringify(prereqPattern) + " file pattern did not match any changed files of the pull request");
+    return;
   }
+  Core2.info(JSON.stringify(Github2.context.eventName) + " is not a pull request event; skipping");
 }
 
 // src/Index.res.mjs

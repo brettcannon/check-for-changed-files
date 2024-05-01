@@ -1,3 +1,6 @@
+@module("@actions/core") external logInfo: string => unit = "info"
+@module("@actions/core") external logFailure: string => unit = "setFailed"
+
 /**
  Get a quoted version of a string.
  */
@@ -12,60 +15,41 @@ let formatFailureMessage = (template, prereqPattern, filePattern, skipLabel) =>
   ->String.replaceAll("${file-pattern}", repr(filePattern))
   ->String.replaceAll("${skip-label}", repr(skipLabel))
 
-%%raw(`
-import * as core from "@actions/core";
-import * as github from "@actions/github";
-import * as gh from "./GH.res.mjs";
-import * as matching from "./Matching.res.mjs";
+let main = async (): unit => {
+  switch GH.pullRequestPayload() {
+  | None => logInfo(`${repr(GH.context["eventName"])} is not a pull request event; skipping`)
+  | Some(payload) => {
+      let skipLabel = GH.getInput("skip-label")
+      let prLabels = GH.pullRequestLabels(payload)
 
-export async function main() {
-  try {
-    const payload = gh.pullRequestPayload();
-    if (payload === undefined) {
-      core.info(repr(github.context.eventName) + " is not a pull request event; skipping");
-      return;
+      if Matching.hasLabelMatch(prLabels, skipLabel) {
+        logInfo(`the skip label ${repr(skipLabel)} is set`)
+      } else {
+        let filePaths = await GH.changedFiles(payload)
+        let prereqPattern = GH.getInput("prereq-pattern")
+
+        if !Matching.anyFileMatches(filePaths, prereqPattern) {
+          logInfo(
+            `the prerequisite ${repr(
+                prereqPattern,
+              )} file pattern did not match any changed files of the pull request`,
+          )
+        } else {
+          let filePattern = GH.getInput("file-pattern")
+
+          if filePattern == "" {
+            logFailure("The 'file-pattern' input was not specified")
+          } else if Matching.anyFileMatches(filePaths, filePattern) {
+            logInfo(
+              `the ${repr(filePattern)} file pattern matched the changed files of the pull request`,
+            )
+          } else {
+            let failureMessage = GH.getInput("failure-message")
+
+            logFailure(formatFailureMessage(failureMessage, prereqPattern, filePattern, skipLabel))
+          }
+        }
+      }
     }
-
-    const skipLabel = core.getInput("skip-label");
-    const prLabels = gh.pullRequestLabels(payload);
-    if (matching.hasLabelMatch(prLabels, skipLabel)) {
-      core.info("the skip label " + repr(skipLabel) +" is set");
-      return;
-    }
-
-    const filePaths = await gh.changedFiles(payload);
-    const prereqPattern = core.getInput("prereq-pattern");
-    if (!matching.anyFileMatches(filePaths, prereqPattern)) {
-      core.info(
-        "the prerequisite " + repr(
-          prereqPattern
-        ) +" file pattern did not match any changed files of the pull request"
-      );
-      return;
-    }
-
-    const filePattern = core.getInput("file-pattern", { required: true });
-    if (matching.anyFileMatches(filePaths, filePattern)) {
-      core.info(
-        "the " + repr(
-          filePattern
-        ) +" file pattern matched the changed files of the pull request"
-      );
-      return;
-    }
-
-    const failureMessage = core.getInput("failure-message");
-
-    core.setFailed(
-      formatFailureMessage(
-        failureMessage,
-        prereqPattern,
-        filePattern,
-        skipLabel
-      )
-    );
-  } catch (error) {
-    core.setFailed("Action failed with error " + error);
   }
 }
-`)
