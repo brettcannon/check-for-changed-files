@@ -47,9 +47,9 @@ let pullRequestLabels = payload =>
  */
 let changedFiles = async payload => {
   let octokit = switch getInput("token") {
-  | "" => %raw(`new Octokit.plugin(paginateRest)()`)
+  | "" => %raw(`new (Octokit.plugin(paginateRest))()`)
   // While marked as ignored, `_token` is used inside the %raw() call.
-  | _token => %raw(`new Octokit.plugin(paginateRest)({ auth: _token })`)
+  | _token => %raw(`new (Octokit.plugin(paginateRest))({ auth: _token })`)
   }
 
   await octokit->paginate(

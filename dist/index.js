@@ -25909,7 +25909,7 @@ function pullRequestLabels(payload) {
 }
 async function changedFiles(payload) {
   var _token = Core.getInput("token");
-  var octokit = _token === "" ? new import_core.Octokit.plugin(import_plugin_paginate_rest.paginateRest)() : new import_core.Octokit.plugin(import_plugin_paginate_rest.paginateRest)({ auth: _token });
+  var octokit = _token === "" ? new (import_core.Octokit.plugin(import_plugin_paginate_rest.paginateRest))() : new (import_core.Octokit.plugin(import_plugin_paginate_rest.paginateRest))({ auth: _token });
   return await octokit.paginate("GET /repos/{owner}/{repo}/pulls/{pull_number}/files", {
     owner: payload.repository.owner.login,
     repo: payload.repository.name,
