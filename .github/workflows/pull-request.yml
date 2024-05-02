@@ -34,7 +34,7 @@ jobs:
           node-version: "20"
       - run: npm ci
       - run: npm run res:build
-      - run: npm trun test
+      - run: npm run test
 
   dogfood:
     name: Dogfood the action
