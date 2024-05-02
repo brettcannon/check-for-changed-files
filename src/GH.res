@@ -39,22 +39,23 @@ type prPayloadType = {
 }
 
 /**
- Payload type to be used by `context`.
- */
-type payloadType = {
-  pull_request: option<prType>,
-  repository: option<repoType>,
-}
+ Payload object type to be used by `context`.
 
-type contextType = {
-  eventName: string,
-  payload: option<payloadType>,
-}
+ Specified as an object to avoid confusion with prPayloadType which is a record.
+ */
+type payloadType = {"pull_request": option<prType>, "repository": option<repoType>}
+
+/**
+ Object type for the context of the action.
+
+ Specified as an object for consistency with payloadType.
+ */
+type contextType = {"eventName": string, "payload": option<payloadType>}
 
 /**
  Options for `paginate()`.
  */
-type paginateOptionType = {
+type paginateOptionsType = {
   owner: string,
   repo: string,
   pull_number: int,
@@ -84,7 +85,7 @@ type paginateProcessType = paginateResponseType => paginateReturnType
 external paginate: (
   'octokit, // Too much of a pain to type.
   string,
-  paginateOptionType,
+  paginateOptionsType,
   paginateProcessType,
 ) => promise<paginateReturnType> = "paginate"
 // Imports used only inside %raw calls; doing this in ReScript would cause the
@@ -99,14 +100,15 @@ import { paginateRest } from "@octokit/plugin-paginate-rest";
  *
  * Returns `undefined` if the context is anything but a PR.
  */
-let pullRequestPayload = (): option<prPayloadType> => {
-  let payload = context.payload->Option.getOr({pull_request: None, repository: None})
+let pullRequestPayload = () => {
+  let payload = context["payload"]->Option.getOr({"pull_request": None, "repository": None})
 
-  switch payload {
-  | {pull_request: Some(pr), repository: Some(repo)} if context.eventName == "pull_request" => {
-      let prPayload: prPayloadType = {pull_request: pr, repository: repo}
-      Some(prPayload)
-    }
+  switch (payload["pull_request"], payload["repository"]) {
+  | (Some(pr), Some(repo)) if context["eventName"] == "pull_request" =>
+    Some({
+      pull_request: pr,
+      repository: repo,
+    })
   | _ => None
   }
 }
@@ -114,13 +116,13 @@ let pullRequestPayload = (): option<prPayloadType> => {
 /**
  * Get the labels of the PR.
  */
-let pullRequestLabels = (payload: prPayloadType) =>
+let pullRequestLabels = payload =>
   payload.pull_request.labels->Array.map(labelData => labelData.name)
 
 /**
  * Fetch the list of changed files in the PR.
  */
-let changedFiles = async (payload: prPayloadType) => {
+let changedFiles = async payload => {
   let octokit = switch getInput("token") {
   | "" => %raw(`new (Octokit.plugin(paginateRest))()`)
   // While marked as ignored, `_token` is used inside the %raw() call.

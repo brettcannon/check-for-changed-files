@@ -25929,15 +25929,12 @@ function pullRequestPayload() {
     pull_request: void 0,
     repository: void 0
   });
-  var pr = payload.pull_request;
-  if (pr === void 0) {
-    return;
-  }
-  var repo = payload.repository;
-  if (repo !== void 0 && Github.context.eventName === "pull_request") {
+  var match = payload.pull_request;
+  var match$1 = payload.repository;
+  if (match !== void 0 && match$1 !== void 0 && Github.context.eventName === "pull_request") {
     return {
-      pull_request: pr,
-      repository: repo
+      pull_request: match,
+      repository: match$1
     };
   }
 }
