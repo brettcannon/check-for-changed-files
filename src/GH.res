@@ -1,15 +1,63 @@
 /* TODO
   - Isolate %raw() code into its own function so its more isolated/obvious
   - Wrap getInput() into a function that returns option<string>
-  - Type `context`/contextType so that the "pull_request" and "repository" are optional, but not subfields
-  - Type the pullRequestPayloadType so that "pull_request" and "repository" are required
-  - pullRequestPayload() return `option<pullRequestPayloadType>`
-  - Type paginate() better
- */
+*/
 
-@module("@actions/github") external context: 'whatever = "context"
+type labelType = {name: string}
+
+type prType = {
+  number: int,
+  labels: array<labelType>,
+}
+
+type ownerType = {login: string}
+
+type repoType = {
+  name: string,
+  owner: ownerType,
+}
+
+/**
+ A payload type that avoids having to go through `option` on all accesses.
+ */
+type prPayloadType = {
+  pull_request: prType,
+  repository: repoType,
+}
+
+type payloadType = {
+  pull_request: option<prType>,
+  repository: option<repoType>,
+}
+type contextType = {
+  eventName: string,
+  payload: option<payloadType>,
+}
+
+type paginateOptionType = {
+  owner: string,
+  repo: string,
+  pull_number: int,
+  per_page: int,
+}
+
+type fileDataType = {filename: string}
+
+type paginateResponseType = {data: array<fileDataType>}
+
+type paginateReturnType = array<string>
+
+type paginateCallbackType = paginateResponseType => paginateReturnType
+
+@module("@actions/github") external context: contextType = "context"
 @module("@actions/core") external getInput: string => string = "getInput"
-@send external paginate: ('a, 'b, 'c, 'd) => promise<array<string>> = "paginate"
+@send
+external paginate: (
+  'octokit,
+  string,
+  paginateOptionType,
+  paginateCallbackType,
+) => promise<paginateReturnType> = "paginate"
 // Imports used only inside %raw calls; doing this in ReScript would cause the
 // compiler to drop the imports as unnecessary.
 %%raw(`
@@ -18,34 +66,32 @@ import { paginateRest } from "@octokit/plugin-paginate-rest";
 `)
 
 /**
- * Check if 'github.context.payload' is from a PR, returning it as the appropriate type.
+ * Check if `github.context.payload` is from a PR, returning it as the appropriate type.
  *
- * Returns 'undefined' if the context is anything but a PR.
+ * Returns `undefined` if the context is anything but a PR.
  */
-let pullRequestPayload = () => {
-  if (
-    context["eventName"] == "pull_request" &&
-    context["payload"] != Nullable.undefined &&
-    context["payload"]["pull_request"] != Nullable.undefined &&
-    context["payload"]["repository"] != Nullable.undefined
-  ) {
-    // TODO: Can return a specific pullRequestPayloadType to avoid deeply nested option access.
-    context["payload"]
-  } else {
-    None
+let pullRequestPayload = (): option<prPayloadType> => {
+  let payload = context.payload->Option.getOr({pull_request: None, repository: None})
+
+  switch payload {
+  | {pull_request: Some(pr), repository: Some(repo)} if context.eventName == "pull_request" => {
+      let prPayload: prPayloadType = {pull_request: pr, repository: repo}
+      Some(prPayload)
+    }
+  | _ => None
   }
 }
 
 /**
  * Get the labels of the PR.
  */
-let pullRequestLabels = payload =>
-  payload["pull_request"]["labels"]->Array.map(labelData => labelData["name"])
+let pullRequestLabels = (payload: prPayloadType) =>
+  payload.pull_request.labels->Array.map(labelData => labelData.name)
 
 /**
  * Fetch the list of changed files in the PR.
  */
-let changedFiles = async payload => {
+let changedFiles = async (payload: prPayloadType) => {
   let octokit = switch getInput("token") {
   | "" => %raw(`new (Octokit.plugin(paginateRest))()`)
   // While marked as ignored, `_token` is used inside the %raw() call.
@@ -55,11 +101,11 @@ let changedFiles = async payload => {
   await octokit->paginate(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
     {
-      "owner": payload["repository"]["owner"]["login"],
-      "repo": payload["repository"]["name"],
-      "pull_number": payload["pull_request"]["number"],
-      "per_page": 100,
+      owner: payload.repository.owner.login,
+      repo: payload.repository.name,
+      pull_number: payload.pull_request.number,
+      per_page: 100,
     },
-    response => response["data"]->Array.map(fileData => fileData["filename"]),
+    response => response.data->Array.map(fileData => fileData.filename),
   )
 }

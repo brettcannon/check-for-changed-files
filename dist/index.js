@@ -25892,14 +25892,53 @@ __export(Index_res_exports, {
 });
 module.exports = __toCommonJS(Index_res_exports);
 
+// node_modules/rescript/lib/es6/caml_option.js
+function valFromOption(x) {
+  if (!(x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== void 0)) {
+    return x;
+  }
+  var depth = x.BS_PRIVATE_NESTED_SOME_NONE;
+  if (depth === 0) {
+    return;
+  } else {
+    return {
+      BS_PRIVATE_NESTED_SOME_NONE: depth - 1 | 0
+    };
+  }
+}
+
+// node_modules/@rescript/core/src/Core__Option.res.mjs
+function getOr(opt, $$default) {
+  if (opt !== void 0) {
+    return valFromOption(opt);
+  } else {
+    return $$default;
+  }
+}
+function isSome(x) {
+  return x !== void 0;
+}
+
 // src/GH.res.mjs
 var Core = __toESM(require_core(), 1);
 var Github = __toESM(require_github(), 1);
 var import_core = __toESM(require_dist_node8(), 1);
 var import_plugin_paginate_rest = __toESM(require_dist_node10(), 1);
 function pullRequestPayload() {
-  if (Github.context.eventName === "pull_request" && Github.context.payload !== void 0 && Github.context.payload.pull_request !== void 0 && Github.context.payload.repository !== void 0) {
-    return Github.context.payload;
+  var payload = getOr(Github.context.payload, {
+    pull_request: void 0,
+    repository: void 0
+  });
+  var pr = payload.pull_request;
+  if (pr === void 0) {
+    return;
+  }
+  var repo = payload.repository;
+  if (repo !== void 0 && Github.context.eventName === "pull_request") {
+    return {
+      pull_request: pr,
+      repository: repo
+    };
   }
 }
 function pullRequestLabels(payload) {
@@ -25925,32 +25964,12 @@ async function changedFiles(payload) {
 // src/Matching.res.mjs
 var Minimatch = __toESM(require_minimatch(), 1);
 
-// node_modules/rescript/lib/es6/caml_option.js
-function valFromOption(x) {
-  if (!(x !== null && x.BS_PRIVATE_NESTED_SOME_NONE !== void 0)) {
-    return x;
-  }
-  var depth = x.BS_PRIVATE_NESTED_SOME_NONE;
-  if (depth === 0) {
-    return;
-  } else {
-    return {
-      BS_PRIVATE_NESTED_SOME_NONE: depth - 1 | 0
-    };
-  }
-}
-
 // node_modules/@rescript/core/src/Core__Array.res.mjs
 function indexOfOpt(arr, item) {
   var index = arr.indexOf(item);
   if (index !== -1) {
     return index;
   }
-}
-
-// node_modules/@rescript/core/src/Core__Option.res.mjs
-function isSome(x) {
-  return x !== void 0;
 }
 
 // src/Matching.res.mjs
@@ -25975,14 +25994,13 @@ function formatFailureMessage(template, prereqPattern, filePattern, skipLabel) {
 async function main() {
   var payload = pullRequestPayload();
   if (payload !== void 0) {
-    var payload$1 = valFromOption(payload);
     var skipLabel = Core2.getInput("skip-label");
-    var prLabels = pullRequestLabels(payload$1);
+    var prLabels = pullRequestLabels(payload);
     if (hasLabelMatch(prLabels, skipLabel)) {
       Core2.info("the skip label " + JSON.stringify(skipLabel) + " is set");
       return;
     }
-    var filePaths = await changedFiles(payload$1);
+    var filePaths = await changedFiles(payload);
     var prereqPattern = Core2.getInput("prereq-pattern");
     if (anyFileMatches(filePaths, prereqPattern)) {
       var filePattern = Core2.getInput("file-pattern");
