@@ -33,6 +33,7 @@ jobs:
         with:
           node-version: "20"
       - run: npm ci
+      - run: npm res:build
       - run: npm test
 
   dogfood:
