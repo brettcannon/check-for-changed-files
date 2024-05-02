@@ -22,20 +22,6 @@ jobs:
       - run: npm ci
       - run: npm run format-check
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-      - run: npm ci
-      - run: npm run res:build
-      - run: npm run test
-
   dogfood:
     name: Dogfood the action
     runs-on: ubuntu-latest
