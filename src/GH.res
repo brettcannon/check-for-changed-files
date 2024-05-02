@@ -1,17 +1,30 @@
 /* TODO
   - Isolate %raw() code into its own function so its more isolated/obvious
-  - Wrap getInput() into a function that returns option<string>
+  - Wrap getInput() into a function that returns option<string> and has an optional trimWhitespace parameter;
+    https://github.com/actions/toolkit/blob/ae38557bb0dba824cdda26ce787bd6b66cf07a83/packages/core/src/core.ts#L126-L138
 */
 
+/**
+ Labels in a PR.
+ */
 type labelType = {name: string}
 
+/**
+ Critical info from a pull request payload.
+ */
 type prType = {
   number: int,
   labels: array<labelType>,
 }
 
+/**
+ The owner or a repository.
+ */
 type ownerType = {login: string}
 
+/**
+ The repository details for a payload.
+ */
 type repoType = {
   name: string,
   owner: ownerType,
@@ -25,15 +38,22 @@ type prPayloadType = {
   repository: repoType,
 }
 
+/**
+ Payload type to be used by `context`.
+ */
 type payloadType = {
   pull_request: option<prType>,
   repository: option<repoType>,
 }
+
 type contextType = {
   eventName: string,
   payload: option<payloadType>,
 }
 
+/**
+ Options for `paginate()`.
+ */
 type paginateOptionType = {
   owner: string,
   repo: string,
@@ -41,22 +61,31 @@ type paginateOptionType = {
   per_page: int,
 }
 
+/**
+ File data passed into the processing function for `paginate()`.
+ */
 type fileDataType = {filename: string}
 
+/**
+ The type being passed into the processing function for `paginate()`.
+ */
 type paginateResponseType = {data: array<fileDataType>}
 
 type paginateReturnType = array<string>
 
-type paginateCallbackType = paginateResponseType => paginateReturnType
+/**
+ The function passed into `paginate()` to process the results.
+ */
+type paginateProcessType = paginateResponseType => paginateReturnType
 
 @module("@actions/github") external context: contextType = "context"
 @module("@actions/core") external getInput: string => string = "getInput"
 @send
 external paginate: (
-  'octokit,
+  'octokit, // Too much of a pain to type.
   string,
   paginateOptionType,
-  paginateCallbackType,
+  paginateProcessType,
 ) => promise<paginateReturnType> = "paginate"
 // Imports used only inside %raw calls; doing this in ReScript would cause the
 // compiler to drop the imports as unnecessary.
