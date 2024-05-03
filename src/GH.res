@@ -79,11 +79,16 @@ type paginateReturnType = array<string>
  */
 type paginateProcessType = paginateResponseType => paginateReturnType
 
+/**
+ Opaque type for an Octokit object.
+ */
+type octokitType
+
 @module("@actions/github") external context: contextType = "context"
 @module("@actions/core") external getInput: string => string = "getInput"
 @send
 external paginate: (
-  'octokit, // Too much of a pain to type.
+  octokitType, // Too much of a pain to type.
   string,
   paginateOptionsType,
   paginateProcessType,
@@ -123,7 +128,7 @@ let pullRequestLabels = payload =>
  * Fetch the list of changed files in the PR.
  */
 let changedFiles = async payload => {
-  let octokit = switch getInput("token") {
+  let octokit: octokitType = switch getInput("token") {
   | "" => %raw(`new (Octokit.plugin(paginateRest))()`)
   // While marked as ignored, `_token` is used inside the %raw() call.
   | _token => %raw(`new (Octokit.plugin(paginateRest))({ auth: _token })`)
