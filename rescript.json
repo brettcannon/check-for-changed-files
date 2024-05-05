@@ -17,6 +17,6 @@
   },
   "suffix": ".res.mjs",
   "bs-dependencies": ["@rescript/core"],
-  "bs-dev-dependencies": ["@dusty-phillips/rescript-zora"],
+  "bs-dev-dependencies": ["@dusty-phillips/rescript-zora", "rescript-nodejs"],
   "bsc-flags": ["-open RescriptCore"]
 }

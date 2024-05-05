@@ -9,7 +9,7 @@ let repr = str => JSON.Encode.string(str)->JSON.stringify
 /**
  Format a failure message based on the template provided.
  */
-let formatFailureMessage = (template, prereqPattern, filePattern, skipLabel) =>
+let formatFailureMessage = (template, ~prereqPattern, ~filePattern, ~skipLabel) =>
   template
   ->String.replaceAll("${prereq-pattern}", repr(prereqPattern))
   ->String.replaceAll("${file-pattern}", repr(filePattern))
@@ -46,7 +46,9 @@ let main = async (): unit => {
           } else {
             let failureMessage = GH.getInput("failure-message")
 
-            logFailure(formatFailureMessage(failureMessage, prereqPattern, filePattern, skipLabel))
+            logFailure(
+              formatFailureMessage(failureMessage, ~prereqPattern, ~filePattern, ~skipLabel),
+            )
           }
         }
       }
