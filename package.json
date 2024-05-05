@@ -10,8 +10,7 @@
     "res:build": "rescript",
     "res:clean": "rescript clean",
     "res:dev": "rescript -w",
-    "test": "vitest run",
-    "test-watch": "vitest",
+    "test": "pta tests/*.mjs",
     "format": "rescript format -all",
     "format-check": "rescript format -all -check",
     "package": "esbuild src/Index.res.mjs --outfile=dist/index.js --bundle --platform=node --target=node20",
@@ -28,11 +27,10 @@
   },
   "homepage": "https://github.com/brettcannon/check-for-changed-files#readme",
   "devDependencies": {
+    "@dusty-phillips/rescript-zora": "^4.0.0",
     "esbuild": "^0.20.2",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^8.10.0",
     "prettier": "^2.8.8",
-    "vitest": "^1.1.3"
+    "pta": "^1.2.0"
   },
   "dependencies": {
     "@actions/core": "^1.10.1",
