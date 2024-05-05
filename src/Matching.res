@@ -1,4 +1,5 @@
-@module("minimatch") external reFromGlob: (string, @as(json`{"dot": true}`) _) => Re.t = "makeRe"
+@module("minimatch")
+external minimatch: (string, string, @as(json`{"dot": true}`) _) => bool = "default"
 
 /**
  * Check if any of the file paths match the file glob pattern.
@@ -10,8 +11,7 @@ let anyFileMatches = (filePaths: array<string>, pattern: string) =>
   pattern
   ->String.split("\n")
   ->Array.some(pattern => {
-    let regexp = reFromGlob(pattern)
-    filePaths->Array.some(val => regexp->Re.test(val))
+    filePaths->Array.some(path => minimatch(path, pattern))
   })
 
 /**
