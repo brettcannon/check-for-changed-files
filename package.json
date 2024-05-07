@@ -12,7 +12,6 @@
     "res:dev": "rescript -w",
     "test": "pta tests/*.mjs",
     "format": "rescript format -all",
-    "format-check": "rescript format -all -check",
     "package": "esbuild src/Index.res.mjs --outfile=dist/index.js --bundle --platform=node --target=node20",
     "all": "npm run res:build && npm run test && npm run format && npm run package"
   },
