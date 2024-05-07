@@ -114,7 +114,7 @@ let pullRequestPayload = () => {
       pull_request: pr,
       repository: repo,
     })
-  | _ => None
+  |_ => None
   }
 }
 
