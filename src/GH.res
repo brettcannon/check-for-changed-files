@@ -84,7 +84,7 @@ type paginateProcessType = paginateResponseType => paginateReturnType
  */
 type octokitType
 
-@module("@actions/github") external context: contextType = "context"
+@module("@actions/github") external actionContext: contextType = "context"
 @module("@actions/core") external getInput: string => string = "getInput"
 @send
 external paginate: (
@@ -105,9 +105,8 @@ import { paginateRest } from "@octokit/plugin-paginate-rest";
  *
  * Returns `undefined` if the context is anything but a PR.
  */
-let pullRequestPayload = () => {
+let pullRequestPayload = (~context=actionContext) => {
   let payload = context["payload"]->Option.getOr({"pull_request": None, "repository": None})
-
   switch (payload["pull_request"], payload["repository"]) {
   | (Some(pr), Some(repo)) if context["eventName"] == "pull_request" =>
     Some({
