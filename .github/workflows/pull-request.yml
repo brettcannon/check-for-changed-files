@@ -10,7 +10,7 @@ name: PR status checks
 
 jobs:
   lint:
-    name: Lint
+    name: Formatting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,7 +22,7 @@ jobs:
       - run: npm ci --include dev
       - run: npm run format
       - name: Check if any files changed
-        run: if [ -n "$(git status --porcelain)" ]; then (exit 1); fi
+        run: if [ -n "$(git status --untracked-files --porcelain)" ]; then (exit 1); fi
         shell: bash
 
   test:
