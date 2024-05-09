@@ -1,0 +1,36 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "res:build",
+			"problemMatcher": [],
+			"label": "npm: res:build",
+			"detail": "rescript build",
+			"group": "build"
+		},
+		{
+			"type": "npm",
+			"script": "res:dev",
+			"problemMatcher": [],
+			"label": "npm: res:dev",
+			"detail": "rescript build -w",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"isBackground": true
+		},
+		{
+			"type": "npm",
+			"script": "test",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"label": "npm: test",
+			"detail": "pta tests/*.mjs"
+		}
+	]
+}
