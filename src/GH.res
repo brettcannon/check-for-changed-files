@@ -45,12 +45,51 @@ type prPayloadType = {
  */
 type payloadType = {"pull_request": option<prType>, "repository": option<repoType>}
 
+type eventName = [
+  | #branch_protection_rule
+  | #check_run
+  | #check_suite
+  | #create
+  | #delete
+  | #deployment
+  | #deployment_status
+  | #discussion
+  | #discussion_comment
+  | #fork
+  | #gollum
+  | #issue_comment
+  | #issues
+  | #label
+  | #merge_group
+  | #milestone
+  | #page_build
+  | #project
+  | #project_card
+  | #project_column
+  | #public
+  | #pull_request
+  | #pull_request_comment
+  | #pull_request_review
+  | #pull_request_review_comment
+  | #pull_request_target
+  | #push
+  | #registry_package
+  | #release
+  | #repository_dispatch
+  | #schedule
+  | #status
+  | #watch
+  | #workflow_call
+  | #workflow_dispatch
+  | #workflow_run
+]
+
 /**
  Object type for the context of the action.
 
  Specified as an object for consistency with payloadType.
  */
-type contextType = {"eventName": string, "payload": option<payloadType>}
+type contextType = {"eventName": eventName, "payload": option<payloadType>}
 
 /**
  Options for `paginate()`.
@@ -108,7 +147,7 @@ import { paginateRest } from "@octokit/plugin-paginate-rest";
 let pullRequestPayload = (~context=actionContext) => {
   let payload = context["payload"]->Option.getOr({"pull_request": None, "repository": None})
   switch (payload["pull_request"], payload["repository"]) {
-  | (Some(pr), Some(repo)) if context["eventName"] == "pull_request" =>
+  | (Some(pr), Some(repo)) if context["eventName"] == #pull_request =>
     Some({
       pull_request: pr,
       repository: repo,

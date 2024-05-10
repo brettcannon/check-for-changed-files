@@ -17,7 +17,10 @@ let formatFailureMessage = (template, ~prereqPattern, ~filePattern, ~skipLabel) 
 
 let main = async (): unit => {
   switch GH.pullRequestPayload() {
-  | None => logInfo(`${repr(GH.actionContext["eventName"])} is not a pull request event; skipping`)
+  | None =>
+    logInfo(
+      `${repr((GH.actionContext["eventName"] :> string))} is not a pull request event; skipping`,
+    )
   | Some(payload) => {
       let skipLabel = GH.getInput("skip-label")
       let prLabels = GH.pullRequestLabels(payload)
