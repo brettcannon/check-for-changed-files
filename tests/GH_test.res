@@ -1,26 +1,25 @@
 open Zora
 
-// pullRequestPayload
-// pullRequestLabels
-// changedFiles
+// TODO pullRequestLabels
+// TODO changedFiles
 
 zora("pullRequestPayload()", async t => {
+  let prData: GH.prType = {
+    number: 1234,
+    labels: [],
+  }
+
+  let repoData: GH.repoType = {
+    name: "check-for-changed-files",
+    owner: {login: "brettcannon"},
+  }
+
+  let payload: GH.payloadType = {
+    "pull_request": Some(prData),
+    "repository": Some(repoData),
+  }
+
   t->test("success", async t => {
-    let prData: GH.prType = {
-      number: 1234,
-      labels: [],
-    }
-
-    let repoData: GH.repoType = {
-      name: "check-for-changed-files",
-      owner: {login: "brettcannon"},
-    }
-
-    let payload: GH.payloadType = {
-      "pull_request": Some(prData),
-      "repository": Some(repoData),
-    }
-
     let context: GH.contextType = {
       "eventName": #pull_request,
       "payload": Some(payload),
@@ -40,21 +39,6 @@ zora("pullRequestPayload()", async t => {
   })
 
   t->test("not a PR event", async t => {
-    let prData: GH.prType = {
-      number: 1234,
-      labels: [],
-    }
-
-    let repoData: GH.repoType = {
-      name: "check-for-changed-files",
-      owner: {login: "brettcannon"},
-    }
-
-    let payload: GH.payloadType = {
-      "pull_request": Some(prData),
-      "repository": Some(repoData),
-    }
-
     let context: GH.contextType = {
       "eventName": #issues,
       "payload": Some(payload),
@@ -76,11 +60,6 @@ zora("pullRequestPayload()", async t => {
   })
 
   t->test("No repository data", async t => {
-    let prData: GH.prType = {
-      number: 1234,
-      labels: [],
-    }
-
     let payload: GH.payloadType = {
       "pull_request": Some(prData),
       "repository": None,
@@ -95,11 +74,6 @@ zora("pullRequestPayload()", async t => {
   })
 
   t->test("No pull request data", async t => {
-    let repoData: GH.repoType = {
-      name: "check-for-changed-files",
-      owner: {login: "brettcannon"},
-    }
-
     let payload: GH.payloadType = {
       "pull_request": None,
       "repository": Some(repoData),
