@@ -40,15 +40,8 @@
 			"problemMatcher": [],
 			"label": "npm: test:watch",
 			// https://crates.io/crates/watchexec-cli
-			"detail": "watchexec --watch tests \"npx pta tests/*.mjs\"",
+			"detail": "watchexec --watch <tests>",
 			"isBackground": true
-		},
-		{
-			"label": "all:watch",
-			"isBackground": true,
-			"group": "build",
-			"type": "shell",
-			"command": "watchexec --exts res \"npx rescript build && npx pta tests/*.mjs\""
 		}
 	]
 }
