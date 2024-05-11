@@ -1,6 +1,5 @@
 open Zora
 
-// TODO pullRequestLabels
 // TODO changedFiles
 
 zora("pullRequestPayload()", async t => {
@@ -87,6 +86,25 @@ zora("pullRequestPayload()", async t => {
     t->optionNone(
       GH.pullRequestPayload(~context),
       "should be None when not a PR event (based on name)",
+    )
+  })
+})
+
+zora("pullRequestLabels()", async t => {
+  let repoData: GH.repoType = {
+    name: "check-for-changed-files",
+    owner: {login: "brettcannon"},
+  }
+
+  t->test("Labels", async t => {
+    let labels: array<GH.labelType> = [{name: "A"}, {name: "B"}, {name: "C"}]
+
+    let payload: GH.prPayloadType = {pull_request: {number: 1234, labels}, repository: repoData}
+
+    t->equal(
+      payload->GH.pullRequestLabels,
+      ["A", "B", "C"],
+      "should return all labels in a flattened attray",
     )
   })
 })
