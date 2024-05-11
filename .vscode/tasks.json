@@ -3,22 +3,22 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "res:build",
+			"script": "build",
 			"problemMatcher": [],
-			"label": "npm: res:build",
+			"label": "npm: build",
 			"detail": "rescript build",
 			"group": {
-    "kind": "build",
-    "isDefault": true
-  }
+				"kind": "build",
+				"isDefault": true
+			}
 		},
 		{
 			"type": "npm",
 			"script": "test",
-			"dependsOn": "npm: res:build",
+			"dependsOn": "npm: build",
 			"group": {
-				 "kind": "test",
-				 "isDefault": true
+				"kind": "test",
+				"isDefault": true
 			},
 			"problemMatcher": [],
 			"label": "npm: test",

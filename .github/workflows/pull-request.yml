@@ -36,7 +36,7 @@ jobs:
         with:
           node-version: "20"
       - run: npm ci --include dev
-      - run: npm run res:build
+      - run: npm run build
       - run: npm run test
 
   dogfood:
@@ -44,14 +44,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4 # To run the version of the action from the PR.
-
-      - name: package*.json updated
-        uses: ./
-        with:
-          file-pattern: |
-            package.json
-            package-lock.json
-          skip-label: "skip package*.json"
 
       - name: package-lock.json updated
         uses: ./

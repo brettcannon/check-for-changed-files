@@ -7,14 +7,14 @@
     "node": ">=20.0.0"
   },
   "scripts": {
-    "res:build": "rescript",
-    "res:clean": "rescript clean",
-    "res:dev": "rescript -w",
+    "build": "rescript",
+    "build:watch": "rescript -w",
+    "clean": "rescript clean",
     "test": "pta tests/*.mjs",
-    "test:watch": "watchexec --watch src --watch tests --exts mjs --no-vsc-ignore \"npx pta tests/*.mjs\"",
+    "test:watch": "onchange --initial '{src,tests}/*.mjs' -- pta 'tests/*.mjs'",
     "format": "rescript format -all",
     "package": "esbuild src/Index.res.mjs --outfile=dist/index.js --bundle --platform=node --target=node20",
-    "all": "npm run res:build && npm run test && npm run format && npm run package"
+    "all": "npm run clean && npm run build && npm run test && npm run format && npm run package"
   },
   "repository": {
     "type": "git",
@@ -29,6 +29,7 @@
   "devDependencies": {
     "@dusty-phillips/rescript-zora": "^4.0.0",
     "esbuild": "^0.20.2",
+    "onchange": "^7.1.0",
     "pta": "^1.2.0",
     "rescript-nodejs": "^16.1.0",
     "yaml": "^2.4.2"
