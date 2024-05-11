@@ -25368,7 +25368,7 @@ var require_minimatch = __commonJS({
       m.defaults = function defaults(options) {
         return orig.defaults(ext(def, options));
       };
-      m.makeRe = function makeRe3(pattern, options) {
+      m.makeRe = function makeRe2(pattern, options) {
         return orig.makeRe(pattern, ext(def, options));
       };
       m.braceExpand = function braceExpand2(pattern, options) {
@@ -25728,8 +25728,8 @@ var require_minimatch = __commonJS({
     minimatch.makeRe = function(pattern, options) {
       return new Minimatch2(pattern, options || {}).makeRe();
     };
-    Minimatch2.prototype.makeRe = makeRe2;
-    function makeRe2() {
+    Minimatch2.prototype.makeRe = makeRe;
+    function makeRe() {
       if (this.regexp || this.regexp === false)
         return this.regexp;
       var set = this.set;
@@ -25924,14 +25924,15 @@ var Core = __toESM(require_core(), 1);
 var Github = __toESM(require_github(), 1);
 var import_core = __toESM(require_dist_node8(), 1);
 var import_plugin_paginate_rest = __toESM(require_dist_node10(), 1);
-function pullRequestPayload() {
-  var payload = getOr(Github.context.payload, {
+function pullRequestPayload(contextOpt) {
+  var context3 = contextOpt !== void 0 ? valFromOption(contextOpt) : Github.context;
+  var payload = getOr(context3.payload, {
     pull_request: void 0,
     repository: void 0
   });
   var match = payload.pull_request;
   var match$1 = payload.repository;
-  if (match !== void 0 && match$1 !== void 0 && Github.context.eventName === "pull_request") {
+  if (match !== void 0 && match$1 !== void 0 && context3.eventName === "pull_request") {
     return {
       pull_request: match,
       repository: match$1
@@ -25959,7 +25960,7 @@ async function changedFiles(payload) {
 }
 
 // src/Matching.res.mjs
-var Minimatch = __toESM(require_minimatch(), 1);
+var import_minimatch = __toESM(require_minimatch(), 1);
 
 // node_modules/@rescript/core/src/Core__Array.res.mjs
 function indexOfOpt(arr, item) {
@@ -25972,9 +25973,8 @@ function indexOfOpt(arr, item) {
 // src/Matching.res.mjs
 function anyFileMatches(filePaths, pattern) {
   return pattern.split("\n").some(function(pattern2) {
-    var regexp = Minimatch.makeRe(pattern2, { "dot": true });
-    return filePaths.some(function(val) {
-      return regexp.test(val);
+    return filePaths.some(function(path) {
+      return (0, import_minimatch.default)(path, pattern2, { "dot": true });
     });
   });
 }
@@ -25989,7 +25989,7 @@ function formatFailureMessage(template, prereqPattern, filePattern, skipLabel) {
   return template.replaceAll("${prereq-pattern}", JSON.stringify(prereqPattern)).replaceAll("${file-pattern}", JSON.stringify(filePattern)).replaceAll("${skip-label}", JSON.stringify(skipLabel));
 }
 async function main() {
-  var payload = pullRequestPayload();
+  var payload = pullRequestPayload(void 0);
   if (payload !== void 0) {
     var skipLabel = Core2.getInput("skip-label");
     var prLabels = pullRequestLabels(payload);
