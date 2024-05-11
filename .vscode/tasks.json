@@ -31,6 +31,16 @@
 			"problemMatcher": [],
 			"label": "npm: test",
 			"detail": "pta tests/*.mjs"
+		},
+		{
+			"type": "npm",
+			"script": "test:watch",
+			"group": "test",
+			"problemMatcher": [],
+			"label": "npm: test:watch",
+			// https://crates.io/crates/watchexec-cli
+			"detail": "watchexec --filter \"tests/*.res\" \"npx pta tests/*.mjs\"",
+			"isBackground": true
 		}
 	]
 }
