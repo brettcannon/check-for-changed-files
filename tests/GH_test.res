@@ -1,7 +1,5 @@
 open Zora
 
-// TODO changedFiles
-
 zora("pullRequestPayload()", async t => {
   let prData: GH.prType = {
     number: 1234,
@@ -108,3 +106,8 @@ zora("pullRequestLabels()", async t => {
     )
   })
 })
+
+/*
+ Skipping tests for `changedFiles()` since it's entirely JS and I/O-specific,
+ with both directly feeding the return value.
+*/
