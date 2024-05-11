@@ -24,6 +24,7 @@
 		{
 			"type": "npm",
 			"script": "test",
+			"dependsOn": "npm: res:build",
 			"group": {
 				"kind": "test",
 				"isDefault": true
@@ -39,8 +40,15 @@
 			"problemMatcher": [],
 			"label": "npm: test:watch",
 			// https://crates.io/crates/watchexec-cli
-			"detail": "watchexec --filter \"tests/*.res\" \"npx pta tests/*.mjs\"",
+			"detail": "watchexec --watch tests \"npx pta tests/*.mjs\"",
 			"isBackground": true
+		},
+		{
+			"label": "all:watch",
+			"isBackground": true,
+			"group": "build",
+			"type": "shell",
+			"command": "watchexec --exts res \"npx rescript build && npx pta tests/*.mjs\""
 		}
 	]
 }
