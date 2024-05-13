@@ -20,6 +20,8 @@ let formatFailureMessage = (template, ~prereqPattern, ~filePattern, ~skipLabel) 
  */
 let noSkipLabelMatch = (payload, ~_getInputImpl=GH.getInput, ~_logInfoImpl=logInfo) => {
   let skipLabel = _getInputImpl("skip-label")
+  // Because unset inputs default to `""`, this check will implicitly fail if no label is
+  // specified.
   let prLabels = GH.pullRequestLabels(payload)
 
   if Matching.hasLabelMatch(prLabels, skipLabel) {
