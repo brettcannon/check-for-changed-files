@@ -3,8 +3,6 @@
 open NodeJs
 open Zora
 
-let randomString = () => Math.random()->Float.toString
-
 zora("action.yml", async t => {
   let actionYAMLPath = Path.join([Path.dirname(__FILE__)->Path.dirname, "action.yml"])
   let actionYAMLFile = await Fs.open_(actionYAMLPath, Fs.Flag.read)
@@ -15,7 +13,7 @@ zora("action.yml", async t => {
 
   t->test("prereq-pattern default", async t => {
     let prereqPattern = actionYAML["inputs"]["prereq-pattern"]["default"]
-    let filePaths = [randomString()]
+    let filePaths = [TestUtils.randomString()]
 
     t->ok(
       Matching.anyFileMatches(filePaths, prereqPattern),
@@ -26,9 +24,9 @@ zora("action.yml", async t => {
   // TODO
   t->test("failure-message default", async t => {
     let template = actionYAML["inputs"]["failure-message"]["default"]
-    let prereqPattern = randomString()
-    let filePattern = randomString()
-    let skipLabel = randomString()
+    let prereqPattern = TestUtils.randomString()
+    let filePattern = TestUtils.randomString()
+    let skipLabel = TestUtils.randomString()
 
     let errorMessage = template->Main.formatFailureMessage(~prereqPattern, ~filePattern, ~skipLabel)
 
