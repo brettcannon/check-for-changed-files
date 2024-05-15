@@ -3,13 +3,21 @@ open Zora
 zora("formatFailureMessage()", async t => {
   t->test("arguments used", async t => {
     let template = "${prereq-pattern} ${file-pattern} ${skip-label}"
-    let prereqPattern = TestUtils.randomString()
+    let preReqPattern = TestUtils.randomString()
     let filePattern = TestUtils.randomString()
     let skipLabel = TestUtils.randomString()
 
-    let errorMessage = template->Main.formatFailureMessage(~prereqPattern, ~filePattern, ~skipLabel)
+    let inputs: Action.inputsType = {
+      failureMessage: template,
+      preReqPattern,
+      filePattern,
+      skipLabel,
+      token: "",
+    }
 
-    t->ok(errorMessage->String.includes(prereqPattern), "should contain the pre-req pattern")
+    let errorMessage = inputs->Main.formatFailureMessage
+
+    t->ok(errorMessage->String.includes(preReqPattern), "should contain the pre-req pattern")
     t->ok(errorMessage->String.includes(filePattern), "should include the file pattern")
     t->ok(errorMessage->String.includes(skipLabel), "should include the skip label")
 
