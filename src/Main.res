@@ -1,5 +1,7 @@
-@module("@actions/core") external logInfo: string => unit = "info"
-@module("@actions/core") external logFailure: string => unit = "setFailed"
+type logMessage = string
+
+@module("@actions/core") external logInfo: logMessage => unit = "info"
+@module("@actions/core") external logFailure: logMessage => unit = "setFailed"
 
 /**
  Get a quoted version of a string.
@@ -21,9 +23,7 @@ let formatFailureMessage = (inputs: Action.inputsType) =>
 let skipLabelMatch = (payload, inputs: Action.inputsType) => {
   // Because unset inputs default to `""`, this check will implicitly fail if no label is
   // specified.
-  let prLabels = GH.pullRequestLabels(payload)
-
-  Matching.hasLabelMatch(prLabels, inputs.skipLabel)
+  payload->GH.pullRequestLabels->Matching.hasLabelMatch(inputs.skipLabel)
 }
 
 /**
@@ -40,37 +40,40 @@ let pathsMatchFilePattern = (
   inputs: Action.inputsType,
   ~_logInfoImpl=logInfo,
   ~_logFailureImpl=logFailure,
-): unit => {
+) => {
   if inputs.filePattern == "" {
-    _logFailureImpl("The 'file-pattern' input was not specified")
+    Error("The 'file-pattern' input was not specified")
   } else if Matching.anyFileMatches(filePaths, inputs.filePattern) {
-    _logInfoImpl(
-      `the ${repr(inputs.filePattern)} file pattern matched the changed files of the pull request`,
-    )
+    Ok(`the ${repr(inputs.filePattern)} file pattern matched the changed files of the pull request`)
   } else {
-    _logFailureImpl(inputs->formatFailureMessage)
+    Error(inputs->formatFailureMessage)
   }
 }
 
-let main = async (): unit => {
-  switch GH.pullRequestPayload() {
+// TODO consider inlining logic functions
+/**
+ Check if the workflow has succeeded in passing the check.
+ */
+let checkforChangedFiles = async (payload, inputs, ~_changedFilesImpl=GH.changedFiles): result<
+  logMessage,
+  logMessage,
+> => {
+  switch payload {
   | None =>
-    logInfo(
+    Ok(
       `${repr(
           (GH.actionContext["eventName"] :> string),
         )} is not a full 'pull_request' event; skipping`,
     )
   | Some(payload) =>
-    let inputs = Action.inputs()
-
     switch payload->skipLabelMatch(inputs) {
-    | true => logInfo(`the skip label ${repr(inputs.skipLabel)} is set`)
+    | true => Ok(`the skip label ${repr(inputs.skipLabel)} is set`)
     | false => {
-        let filePaths = await GH.changedFiles(payload)
+        let filePaths = await _changedFilesImpl(payload)
 
         switch filePaths->pathsMatchPreReqPattern(inputs) {
         | false =>
-          logInfo(
+          Ok(
             `the prerequisite ${repr(
                 inputs.preReqPattern,
               )} file pattern did not match any changed files of the pull request`,
@@ -79,5 +82,15 @@ let main = async (): unit => {
         }
       }
     }
+  }
+}
+
+let main = async (): unit => {
+  let payload = GH.pullRequestPayload()
+  let inputs = Action.inputs()
+
+  switch await payload->checkforChangedFiles(inputs) {
+  | Ok(message) => logInfo(message)
+  | Error(message) => logFailure(message)
   }
 }
