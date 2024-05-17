@@ -32,20 +32,36 @@ zora("formatFailureMessage()", async t => {
 })
 
 zora("checkForChangedFiles()", async t => {
-  let okContains = (t, given: result<string, 'b>, expected: string) => {
-    switch given {
-    | Error(_) => t->fail("should not be None")
-    | Ok(logMessage) =>
-      t->ok(logMessage->String.includes(expected), `log message should include "${expected}"`)
-    }
-  }
+  let okContains = (t, given: result<string, 'b>, expected: string) =>
+    t->resultOk(given, (t, r) =>
+      t->ok(r->String.includes(expected), `log message should contain "${expected}"`)
+    )
 
-  t->skip("not a pull request", async t => {
-    t->fail("not implemented")
+  t->test("not a pull request", async t => {
+    let inputs: Action.inputsType = {
+      filePattern: "Dir1/B",
+      preReqPattern: "**",
+      skipLabel: "",
+      failureMessage: "${prereq-pattern} ${file-pattern} ${skip-label}",
+      token: "",
+    }
+
+    t->okContains(await None->Main.checkforChangedFiles(inputs), "pull_request")
   })
 
   t->skip("skip label set", async t => {
     t->fail("not implemented")
+    // let pull_request: GH.prType = {
+    //   number: 1234,
+    //   labels: [{name: "Label skip"}],
+    // }
+
+    // let repository: GH.repoType = {
+    //   name: "check-for-changed-files",
+    //   owner: {login: "brettcannon"},
+    // }
+
+    // let payload: option<GH.prPayloadType> = Some({pull_request, repository})
   })
 
   t->skip("prerequisite pattern does not match", async t => {
