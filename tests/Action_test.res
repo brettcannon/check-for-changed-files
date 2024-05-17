@@ -21,6 +21,12 @@ zora("action.yml", async t => {
     )
   })
 
+  t->test("skip-label default", async t => {
+    let skipLabelDefault = actionYAML["inputs"]["skip-label"]["default"]
+
+    t->equal("", skipLabelDefault, "should be the empty string")
+  })
+
   t->test("failure-message default", async t => {
     let template = actionYAML["inputs"]["failure-message"]["default"]
     let preReqPattern = TestUtils.randomString()
@@ -40,5 +46,23 @@ zora("action.yml", async t => {
     t->ok(errorMessage->String.includes(preReqPattern), "should contain the pre-req pattern")
     t->ok(errorMessage->String.includes(filePattern), "should include the file pattern")
     t->ok(errorMessage->String.includes(skipLabel), "should include the skip label")
+  })
+
+  t->test("inputs are required or defaults", async t => {
+    let inputNames = actionYAML["inputs"]->Object.keysToArray
+
+    inputNames->Array.forEach(
+      inputName => {
+        let inputDetails = actionYAML["inputs"]->Object.get(inputName)
+
+        switch inputDetails {
+        | None => t->fail("Should be impossible")
+        | Some(inputDetails) =>
+          if !inputDetails["required"] {
+            t->ok(inputDetails["default"]->Option.isSome, `"${inputName}" should have a default`)
+          }
+        }
+      },
+    )
   })
 })

@@ -16,6 +16,7 @@ inputs:
   skip-label:
     description: "Label to trigger skipping the check"
     required: false
+    default: ""
   failure-message:
     description: "String template used when the check fails"
     required: false
