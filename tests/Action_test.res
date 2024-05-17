@@ -10,6 +10,7 @@ zora("action.yml", async t => {
   let utf8Decoder = StringEncoding.utf8->StringDecoder.make
   let actionYAMLContents = utf8Decoder->StringDecoder.writeEnd(actionYAMLBuffer)
   let actionYAML = actionYAMLContents->yamlParse
+  await actionYAMLFile->Fs.FileHandle.close
 
   t->test("prereq-pattern default", async t => {
     let prereqPattern = actionYAML["inputs"]["prereq-pattern"]["default"]
