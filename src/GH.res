@@ -164,8 +164,8 @@ let pullRequestLabels = payload =>
 /**
  * Fetch the list of changed files in the PR.
  */
-let changedFiles = async payload => {
-  let octokit: octokitType = switch Action.getInput(#token) {
+let changedFiles = async (payload, inputs: Action.inputsType) => {
+  let octokit: octokitType = switch inputs.token {
   | "" => %raw(`new (Octokit.plugin(paginateRest))()`)
   // While marked as ignored, `_token` is used inside the %raw() call.
   | _token => %raw(`new (Octokit.plugin(paginateRest))({ auth: _token })`)

@@ -31,6 +31,32 @@ zora("formatFailureMessage()", async t => {
   })
 })
 
-// noSkipLabelMatch
-// pathsMatchPrereqPattern
-// pathsMatchFilePattern
+zora("checkForChangedFiles()", async t => {
+  let okContains = (t, given: result<string, 'b>, expected: string) => {
+    switch given {
+    | Error(_) => t->fail("should not be None")
+    | Ok(logMessage) =>
+      t->ok(logMessage->String.includes(expected), `log message should include "${expected}"`)
+    }
+  }
+
+  t->skip("not a pull request", async t => {
+    t->fail("not implemented")
+  })
+
+  t->skip("skip label set", async t => {
+    t->fail("not implemented")
+  })
+
+  t->skip("prerequisite pattern does not match", async t => {
+    t->fail("not implemented")
+  })
+
+  t->skip("a file matches", async t => {
+    t->fail("not implemented")
+  })
+
+  t->skip("failure", async t => {
+    t->fail("not implemented")
+  })
+})
