@@ -7,19 +7,12 @@ type inputsType = {
 }
 
 @module("@actions/core")
-external getInput: @string
-[
-  | @as("file-pattern") #filePattern
-  | @as("prereq-pattern") #preReqPattern
-  | @as("skip-label") #skipLabel
-  | @as("failure-message") #failureMessage
-  | #token
-] => string = "getInput"
+external getInput: string => string = "getInput"
 
 let inputs = () => {
-  filePattern: getInput(#filePattern),
-  preReqPattern: getInput(#preReqPattern),
-  skipLabel: getInput(#skipLabel),
-  token: getInput(#token),
-  failureMessage: getInput(#failureMessage),
+  filePattern: getInput("file-pattern"),
+  preReqPattern: getInput("prereq-pattern"),
+  skipLabel: getInput("skip-label"),
+  token: getInput("token"),
+  failureMessage: getInput("failure-message"),
 }
