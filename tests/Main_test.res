@@ -37,6 +37,30 @@ zora("checkForChangedFiles()", async t => {
       t->ok(r->String.includes(expected), `log message should contain "${expected}"`)
     )
 
+  // Default test data should cause a failure, forcing tests to change things
+  // to having the test pass.
+  let pull_request: GH.prType = {
+    number: 1234,
+    labels: [{name: "Label A"}],
+  }
+
+  let repository: GH.repoType = {
+    name: "check-for-changed-files",
+    owner: {login: "brettcannon"},
+  }
+
+  let payload: option<GH.prPayloadType> = Some({pull_request, repository})
+
+  let inputs: Action.inputsType = {
+    filePattern: "Dir2/B",
+    preReqPattern: "**",
+    skipLabel: "Label B",
+    failureMessage: "${prereq-pattern} ${file-pattern} ${skip-label}",
+    token: "",
+  }
+
+  let fakeChangedFiles = async (_, _) => ["Dir3/C"]
+
   t->test("not a pull request", async t => {
     let inputs: Action.inputsType = {
       filePattern: "Dir1/B",
@@ -49,30 +73,40 @@ zora("checkForChangedFiles()", async t => {
     t->okContains(await None->Main.checkforChangedFiles(inputs), "pull_request")
   })
 
-  t->skip("skip label set", async t => {
-    t->fail("not implemented")
-    // let pull_request: GH.prType = {
-    //   number: 1234,
-    //   labels: [{name: "Label skip"}],
-    // }
+  t->test("skip label set", async t => {
+    let skipLabel = "Label A"
+    let skiplabelInputs = {...inputs, skipLabel}
 
-    // let repository: GH.repoType = {
-    //   name: "check-for-changed-files",
-    //   owner: {login: "brettcannon"},
-    // }
-
-    // let payload: option<GH.prPayloadType> = Some({pull_request, repository})
+    t->okContains(
+      await payload->Main.checkforChangedFiles(
+        skiplabelInputs,
+        ~_changedFilesImpl=fakeChangedFiles,
+      ),
+      skipLabel,
+    )
   })
 
   t->skip("prerequisite pattern does not match", async t => {
-    t->fail("not implemented")
+    // Fails
+    t->okContains(
+      await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
+      "skip",
+    )
   })
 
   t->skip("a file matches", async t => {
-    t->fail("not implemented")
+    // Fails
+    t->okContains(
+      await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
+      "skip",
+    )
   })
 
   t->skip("failure", async t => {
-    t->fail("not implemented")
+    // Fails
+    t->okContains(
+      await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
+      "skip",
+    )
   })
 })
