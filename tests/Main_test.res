@@ -75,22 +75,21 @@ zora("checkForChangedFiles()", async t => {
 
   t->test("skip label set", async t => {
     let skipLabel = "Label A"
-    let skiplabelInputs = {...inputs, skipLabel}
+    let inputs = {...inputs, skipLabel}
 
     t->okContains(
-      await payload->Main.checkforChangedFiles(
-        skiplabelInputs,
-        ~_changedFilesImpl=fakeChangedFiles,
-      ),
+      await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
       skipLabel,
     )
   })
 
-  t->skip("prerequisite pattern does not match", async t => {
-    // Fails
+  t->test("prerequisite pattern does not match", async t => {
+    let preReqPattern = "DirZ/Z"
+    let inputs = {...inputs, preReqPattern}
+
     t->okContains(
       await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
-      "skip",
+      preReqPattern,
     )
   })
 
@@ -98,7 +97,7 @@ zora("checkForChangedFiles()", async t => {
     // Fails
     t->okContains(
       await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
-      "skip",
+      "XXX",
     )
   })
 
@@ -106,7 +105,7 @@ zora("checkForChangedFiles()", async t => {
     // Fails
     t->okContains(
       await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
-      "skip",
+      "XXX",
     )
   })
 })
