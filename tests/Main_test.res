@@ -37,12 +37,6 @@ zora("checkForChangedFiles()", async t => {
       t->ok(r->String.includes(expected), `log message should contain "${expected}"`)
     )
 
-  let errorContains = (t, given: result<string, 'b>, expected: string) =>
-    switch given {
-    | Ok(_) => t->fail("should not return `Some`")
-    | Error(r) => t->ok(r->String.includes(expected), `log message should contain "${expected}"`)
-    }
-
   // Default test data should cause a failure, forcing tests to change things
   // to having the test pass.
   let pull_request: GH.prType = {
@@ -111,9 +105,10 @@ zora("checkForChangedFiles()", async t => {
 
   t->test("failure", async t => {
     let errorMessage = inputs->Main.formatFailureMessage
-    t->errorContains(
-      await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
-      errorMessage,
-    )
+
+    switch await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles) {
+    | Ok(_) => t->fail("should not return `Some`")
+    | Error(r) => t->equal(errorMessage, r, `log message should be "${errorMessage}"`)
+    }
   })
 })
