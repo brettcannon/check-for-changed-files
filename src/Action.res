@@ -6,8 +6,12 @@ type inputsType = {
   token: string,
 }
 
-@module("@actions/core")
-external getInput: string => string = "getInput"
+// Could use a `.resi` file to control visibility, but it requires repeating
+// `inputsType` in the `.resi` file.
+%%private(
+  @module("@actions/core")
+  external getInput: string => string = "getInput"
+)
 
 let inputs = () => {
   filePattern: getInput("file-pattern"),
