@@ -38,8 +38,8 @@ zora("action.yml", async t => {
       failureMessage: template,
       preReqPattern,
       filePattern,
-      skipLabel,
-      token: "",
+      skipLabel: Some(skipLabel),
+      token: None,
     }
 
     let errorMessage = inputs->Main.formatFailureMessage

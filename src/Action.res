@@ -1,9 +1,9 @@
 type inputsType = {
   filePattern: string,
   preReqPattern: string,
-  skipLabel: string,
+  skipLabel: option<string>,
   failureMessage: string,
-  token: string,
+  token: option<string>,
 }
 
 // Could use a `.resi` file to control visibility, but it requires repeating
@@ -14,10 +14,19 @@ type inputsType = {
 )
 
 let inputs = () => {
-  filePattern: getInput("file-pattern"),
-  preReqPattern: getInput("prereq-pattern"),
-  failureMessage: getInput("failure-message"),
-  // Optional
-  skipLabel: getInput("skip-label"),
-  token: getInput("token"),
+  let maybe = val => {
+    if val != "" {
+      Some(val)
+    } else {
+      None
+    }
+  }
+
+  {
+    filePattern: getInput("file-pattern"),
+    preReqPattern: getInput("prereq-pattern"),
+    failureMessage: getInput("failure-message"),
+    skipLabel: getInput("skip-label")->maybe,
+    token: getInput("token")->maybe,
+  }
 }

@@ -11,8 +11,8 @@ zora("formatFailureMessage()", async t => {
       failureMessage: template,
       preReqPattern,
       filePattern,
-      skipLabel,
-      token: "",
+      skipLabel: Some(skipLabel),
+      token: None,
     }
 
     let errorMessage = inputs->Main.formatFailureMessage
@@ -54,9 +54,9 @@ zora("checkForChangedFiles()", async t => {
   let inputs: Action.inputsType = {
     filePattern: "Dir2/B",
     preReqPattern: "**",
-    skipLabel: "Label B",
+    skipLabel: Some("Label B"),
     failureMessage: "${prereq-pattern} ${file-pattern} ${skip-label}",
-    token: "",
+    token: None,
   }
 
   let fakeChangedFiles = async (_, _) => ["Dir3/C"]
@@ -65,9 +65,9 @@ zora("checkForChangedFiles()", async t => {
     let inputs: Action.inputsType = {
       filePattern: "Dir1/B",
       preReqPattern: "**",
-      skipLabel: "",
+      skipLabel: None,
       failureMessage: "${prereq-pattern} ${file-pattern} ${skip-label}",
-      token: "",
+      token: None,
     }
 
     t->okContains(await None->Main.checkforChangedFiles(inputs), "pull_request")
@@ -75,7 +75,7 @@ zora("checkForChangedFiles()", async t => {
 
   t->test("skip label set", async t => {
     let skipLabel = "Label A"
-    let inputs = {...inputs, skipLabel}
+    let inputs = {...inputs, skipLabel: Some(skipLabel)}
 
     t->okContains(
       await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),

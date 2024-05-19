@@ -15,7 +15,7 @@ let formatFailureMessage = (inputs: Action.inputsType) =>
   inputs.failureMessage
   ->String.replaceAll("${prereq-pattern}", repr(inputs.preReqPattern))
   ->String.replaceAll("${file-pattern}", repr(inputs.filePattern))
-  ->String.replaceAll("${skip-label}", repr(inputs.skipLabel))
+  ->String.replaceAll("${skip-label}", repr(inputs.skipLabel->Option.getOr("")))
 
 /**
  Check if the workflow has succeeded in passing the check.
@@ -33,10 +33,10 @@ let checkforChangedFiles = async (
         )} is not a full 'pull_request' event; skipping`,
     )
   | Some(payload) =>
-    // Because `skip-label` defaults to `""`,
-    // this check will implicitly fail if no label is specified.
-    switch payload->GH.pullRequestLabels->Matching.hasLabelMatch(inputs.skipLabel) {
-    | true => Ok(`the skip label ${repr(inputs.skipLabel)} is set`)
+    let prLabels = payload->GH.pullRequestLabels
+    let hasLabelMatch = inputs.skipLabel->Option.mapOr(false, Matching.hasLabelMatch(prLabels, _))
+    switch hasLabelMatch {
+    | true => Ok(`the skip label ${repr(inputs.skipLabel->Option.getOr(""))} is set`)
     | false => {
         let filePaths = await payload->_changedFilesImpl(inputs)
 
