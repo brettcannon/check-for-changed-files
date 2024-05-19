@@ -49,7 +49,17 @@ zora("action.yml", async t => {
     t->ok(errorMessage->String.includes(skipLabel), "should include the skip label")
   })
 
-  t->test("inputs are required or defaults", async t => {
+  t->test("token default", async t => {
+    let skipLabelDefault = actionYAML["inputs"]["token"]["default"]
+
+    t->equal("", skipLabelDefault, "should be the empty string")
+  })
+
+  t->test("file-pattern required", async t => {
+    t->ok(actionYAML["inputs"]["file-pattern"]["required"], "should be required")
+  })
+
+  t->test("all inputs are required or have defaults", async t => {
     let inputNames = actionYAML["inputs"]->Object.keysToArray
 
     inputNames->Array.forEach(
