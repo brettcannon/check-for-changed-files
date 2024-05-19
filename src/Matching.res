@@ -11,7 +11,7 @@ let anyFileMatches = (filePaths: array<string>, pattern: string) =>
   pattern
   ->String.split("\n")
   ->Array.some(pattern => {
-    filePaths->Array.some(path => minimatch(path, pattern))
+    filePaths->Array.some(minimatch(_, pattern))
   })
 
 /**
