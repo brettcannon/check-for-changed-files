@@ -1,9 +1,3 @@
-/* TODO
-  - Isolate %raw() code into its own function so its more isolated/obvious
-  - Wrap getInput() into a function that returns option<string> and has an optional trimWhitespace parameter;
-    https://github.com/actions/toolkit/blob/ae38557bb0dba824cdda26ce787bd6b66cf07a83/packages/core/src/core.ts#L126-L138
-*/
-
 /**
  Labels in a PR.
  */
@@ -161,17 +155,24 @@ let pullRequestPayload = (~context=actionContext) => {
 let pullRequestLabels = payload =>
   payload.pull_request.labels->Array.map(labelData => labelData.name)
 
+%%private(
+  // While marked as ignored to shut the commpiler up,
+  // `_token` is used inside the %raw() call (see the JS output to verify).
+  let makeOctokit = _token => {
+    switch _token {
+    | None => %raw(`new (Octokit.plugin(paginateRest))()`)
+    | Some(_token) => %raw(`new (Octokit.plugin(paginateRest))({ auth: _token })`)
+    }
+  }
+)
+
 /**
  * Fetch the list of changed files in the PR.
  */
 let changedFiles = async (payload, inputs: Action.inputsType) => {
-  let octokit: octokitType = switch inputs.token {
-  | None => %raw(`new (Octokit.plugin(paginateRest))()`)
-  // While marked as ignored, `_token` is used inside the %raw() call.
-  | Some(_token) => %raw(`new (Octokit.plugin(paginateRest))({ auth: _token })`)
-  }
-
-  await octokit->paginate(
+  await inputs.token
+  ->makeOctokit
+  ->paginate(
     "GET /repos/{owner}/{repo}/pulls/{pull_number}/files",
     {
       owner: payload.repository.owner.login,
