@@ -34,7 +34,7 @@ let checkforChangedFiles = async (
     )
   | Some(payload) =>
     let prLabels = payload->GH.pullRequestLabels
-    let hasLabelMatch = inputs.skipLabel->Option.mapOr(false, Matching.hasLabelMatch(prLabels, _))
+    let hasLabelMatch = inputs.skipLabel->Option.mapOr(false, Matching.hasLabelMatch(prLabels, ...))
     switch hasLabelMatch {
     | true => Ok(`the skip label ${repr(inputs.skipLabel->Option.getOr(""))} is set`)
     | false => {
