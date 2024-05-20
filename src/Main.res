@@ -4,7 +4,7 @@ type logMessage = string
 @module("@actions/core") external logFailure: logMessage => unit = "setFailed"
 
 /**
- Get a quoted version of a string.
+ Get the quoted version of a string.
  */
 let repr = str => JSON.Encode.string(str)->JSON.stringify
 
