@@ -58,3 +58,10 @@ jobs:
           prereq-pattern: "src/*.res"
           file-pattern: "dist/index.js"
           skip-label: "skip packaging"
+
+      - name: README.md updated
+        uses: ./
+        with:
+          prereq-pattern: "action.yml"
+          file-pattern: "README.md"
+          skip-label: "skip README"
