@@ -65,10 +65,3 @@ jobs:
           prereq-pattern: "action.yml"
           file-pattern: "README.md"
           skip-label: "skip README"
-
-      - name: README.md updated (testing only)
-        uses: ./
-        with:
-          prereq-pattern: "action.yml"
-          file-pattern: "LICENSE"
-          skip-label: "skip README"
