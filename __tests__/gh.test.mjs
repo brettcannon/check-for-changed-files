@@ -1,6 +1,14 @@
-import { ImportMock } from "ts-mock-imports";
 import * as github from "@actions/github";
-import * as gh from "../src/gh";
+import {
+  afterAll,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from "vitest";
+import * as gh from "../src/GH.res.mjs";
 
 test("gh.pullRequestEvent() return undefined by default", () => {
   expect(gh.pullRequestPayload()).toBeUndefined();
@@ -15,12 +23,10 @@ describe("Stub github.context w/ a pull_request payload", () => {
     },
   };
 
-  beforeEach(() => {
-    ImportMock.mockOther(github, "context", context);
-  });
-  afterEach(() => ImportMock.restore());
+  afterEach(() => vi.restoreAllMocks());
 
   test("pull_request context is returned by gh.pullRequestEvent()", () => {
+    vi.spyOn(github, "context", "get").mockReturnValue(context);
     expect(gh.pullRequestPayload()).toEqual(context.payload);
   });
 });
@@ -33,12 +39,11 @@ describe("Stub github.context w/ a 'push' payload", () => {
       repository: { name: "test", owner: { login: "anonymous" } },
     },
   };
-  beforeEach(() => {
-    ImportMock.mockOther(github, "context", context);
-  });
-  afterEach(() => ImportMock.restore());
+
+  afterEach(() => vi.restoreAllMocks());
 
   test("'undefined' is returned by gh.pullRequestEvent()", () => {
+    vi.spyOn(github, "context", "get").mockReturnValue(context);
     expect(gh.pullRequestPayload()).toBeUndefined();
   });
 });

@@ -10,7 +10,7 @@ name: PR status checks
 
 jobs:
   lint:
-    name: Lint
+    name: Formatting
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,24 +19,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: npm ci
+      - run: npm ci --include dev
+      - run: npm run format
+      - name: Check if any files changed
+        run: if [ -n "$(git status --untracked-files --porcelain)" ]; then (exit 1); fi
+        shell: bash
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci --include dev
       - run: npm run build
-      - run: npm run lint
-      - run: npm run format-check
+      - run: npm run test
 
   dogfood:
-    name: Dogfood the action
+    name: Dogfooding
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4 # To run the version of the action from the PR.
-
-      - name: package*.json updated
-        uses: ./
-        with:
-          file-pattern: |
-            package.json
-            package-lock.json
-          skip-label: "skip package*.json"
 
       - name: package-lock.json updated
         uses: ./
@@ -48,6 +55,13 @@ jobs:
       - name: dist/index.js updated
         uses: ./
         with:
-          prereq-pattern: "src/*.ts"
+          prereq-pattern: "src/*.res"
           file-pattern: "dist/index.js"
           skip-label: "skip packaging"
+
+      - name: README.md updated
+        uses: ./
+        with:
+          prereq-pattern: "action.yml"
+          file-pattern: "README.md"
+          skip-label: "skip README"

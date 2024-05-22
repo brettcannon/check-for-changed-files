@@ -1,16 +1,28 @@
 {
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "type": "typescript",
-      "tsconfig": "tsconfig.json",
-      "option": "watch",
-      "problemMatcher": ["$tsc-watch"],
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      },
-      "label": "tsc: watch - tsconfig.json"
-    }
-  ]
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "build",
+			"problemMatcher": [],
+			"label": "npm: build",
+			"detail": "rescript build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"type": "npm",
+			"script": "test",
+			"dependsOn": "npm: build",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"label": "npm: test",
+			"detail": "pta tests/*.mjs"
+		}
+	]
 }
