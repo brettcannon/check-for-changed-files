@@ -40,7 +40,7 @@ jobs:
       - run: npm run test
 
   dogfood:
-    name: Dogfood the action
+    name: Dogfooding
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4 # To run the version of the action from the PR.
