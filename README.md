@@ -22,7 +22,7 @@ file-pattern: |
 acts as two patterns: `package.json` and `package-lock.json`. Success occurs if
 _any_ of the patterns match.
 
-### `prereq-pattern`
+### `prereq-pattern` (optional)
 
 A pre-requisite glob pattern that, if specified, will cause the action to proceed
 only if the pattern matches. If a match isn't found then the action is considered
@@ -31,17 +31,17 @@ successful.
 See the notes about patterns for `file-pattern` for details on how matching
 occurs and the flexibility in specifying the pattern.
 
-### `skip-label`
+### `skip-label` (optional)
 
 The name of a label to forcibly skip the changed file check.
 
-### `failure-message`
+### `failure-message` (optional)
 
 The message to emit when the check fails. All other inputs can be specified in
 the message using `${}` syntax, e.g. `${file-pattern}` for the `file-pattern`
 input. All values will be quoted for easy identification of any whitespace.
 
-### `token`
+### `token` (optional)
 
 A GitHub auth token to use for private repositories. Falls back to anonymous access if
 not provided. Usually you want to use `${{ secrets.GITHUB_TOKEN }}` for this.
