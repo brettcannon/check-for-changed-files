@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/brettcannon/check-for-changed-files#readme",
   "devDependencies": {
-    "@dusty-phillips/rescript-zora": "^5.0.0",
+    "@dusty-phillips/rescript-zora": "^5.0.1",
     "esbuild": "^0.20.2",
     "onchange": "^7.1.0",
     "pta": "^1.2.0",
