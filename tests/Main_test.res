@@ -17,24 +17,21 @@ zora("formatFailureMessage()", async t => {
 
     let errorMessage = inputs->Main.formatFailureMessage
 
-    t->ok(errorMessage->String.includes(preReqPattern), "should contain the pre-req pattern")
-    t->ok(errorMessage->String.includes(filePattern), "should include the file pattern")
-    t->ok(errorMessage->String.includes(skipLabel), "should include the skip label")
+    t->ok(errorMessage->String.includes(preReqPattern))
+    t->ok(errorMessage->String.includes(filePattern))
+    t->ok(errorMessage->String.includes(skipLabel))
 
-    t->notOk(
-      errorMessage->String.includes("${prereq-pattern}"),
-      "should not contain ${prereq-pattern}",
-    )
-    t->notOk(errorMessage->String.includes("${file-pattern}"), "should not contain ${file-pattern}")
+    t->notOk(errorMessage->String.includes("${prereq-pattern}"))
+    t->notOk(errorMessage->String.includes("${file-pattern}"))
 
-    t->notOk(errorMessage->String.includes("${skip-label}"), "should not contain ${skip-label}")
+    t->notOk(errorMessage->String.includes("${skip-label}"))
   })
 })
 
 zora("checkForChangedFiles()", async t => {
   let okContains = (t, given: result<string, 'b>, expected: string) =>
     t->resultOk(given, (t, r) =>
-      t->ok(r->String.includes(expected), `log message should contain "${expected}"`)
+      t->ok(r->String.includes(expected), ~msg=`log message should contain "${expected}"`)
     )
 
   // Default test data should cause a failure, forcing tests to change things
@@ -106,9 +103,9 @@ zora("checkForChangedFiles()", async t => {
   t->test("failure", async t => {
     let errorMessage = inputs->Main.formatFailureMessage
 
-    switch await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles) {
-    | Ok(_) => t->fail("should not return `Some`")
-    | Error(r) => t->equal(errorMessage, r, `log message should be "${errorMessage}"`)
-    }
+    t->resultError(
+      await payload->Main.checkforChangedFiles(inputs, ~_changedFilesImpl=fakeChangedFiles),
+      (t, n) => t->equal(errorMessage, n),
+    )
   })
 })

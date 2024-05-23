@@ -16,16 +16,13 @@ zora("action.yml", async t => {
     let prereqPattern = actionYAML["inputs"]["prereq-pattern"]["default"]
     let filePaths = [TestUtils.randomString()]
 
-    t->ok(
-      Matching.anyFileMatches(filePaths, prereqPattern),
-      "should be true with the default prereq-pattern and any file path",
-    )
+    t->ok(Matching.anyFileMatches(filePaths, prereqPattern))
   })
 
   t->test("skip-label default", async t => {
     let skipLabelDefault = actionYAML["inputs"]["skip-label"]["default"]
 
-    t->equal("", skipLabelDefault, "should be the empty string")
+    t->equal("", skipLabelDefault)
   })
 
   t->test("failure-message default", async t => {
@@ -44,19 +41,19 @@ zora("action.yml", async t => {
 
     let errorMessage = inputs->Main.formatFailureMessage
 
-    t->ok(errorMessage->String.includes(preReqPattern), "should contain the pre-req pattern")
-    t->ok(errorMessage->String.includes(filePattern), "should include the file pattern")
-    t->ok(errorMessage->String.includes(skipLabel), "should include the skip label")
+    t->ok(errorMessage->String.includes(preReqPattern))
+    t->ok(errorMessage->String.includes(filePattern))
+    t->ok(errorMessage->String.includes(skipLabel))
   })
 
   t->test("token default", async t => {
     let skipLabelDefault = actionYAML["inputs"]["token"]["default"]
 
-    t->equal("", skipLabelDefault, "should be the empty string")
+    t->equal("", skipLabelDefault)
   })
 
   t->test("file-pattern required", async t => {
-    t->ok(actionYAML["inputs"]["file-pattern"]["required"], "should be required")
+    t->ok(actionYAML["inputs"]["file-pattern"]["required"])
   })
 
   t->test("all inputs are required or have defaults", async t => {
@@ -67,10 +64,13 @@ zora("action.yml", async t => {
         let inputDetails = actionYAML["inputs"]->Object.get(inputName)
 
         switch inputDetails {
-        | None => t->fail("Should be impossible")
+        | None => t->fail(~msg="Should be impossible")
         | Some(inputDetails) =>
           if !inputDetails["required"] {
-            t->ok(inputDetails["default"]->Option.isSome, `"${inputName}" should have a default`)
+            t->ok(
+              inputDetails["default"]->Option.isSome,
+              ~msg=`"${inputName}" should have a default`,
+            )
           }
         }
       },
