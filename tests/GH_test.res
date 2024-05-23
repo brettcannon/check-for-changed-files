@@ -26,12 +26,7 @@ zora("pullRequestPayload()", async t => {
 
     t->optionSome(
       prPayload,
-      (t, actual) =>
-        t->equal(
-          actual,
-          {GH.pull_request: prData, repository: repoData},
-          "repo and PR data w/o option",
-        ),
+      (t, actual) => t->equal(actual, {GH.pull_request: prData, repository: repoData}),
     )
   })
 
@@ -41,10 +36,7 @@ zora("pullRequestPayload()", async t => {
       "payload": Some(payload),
     }
 
-    t->optionNone(
-      GH.pullRequestPayload(~context),
-      "should be None when not a PR event (based on name)",
-    )
+    t->optionNone(GH.pullRequestPayload(~context))
   })
 
   t->test("No payload", async t => {
@@ -53,7 +45,7 @@ zora("pullRequestPayload()", async t => {
       "payload": None,
     }
 
-    t->optionNone(GH.pullRequestPayload(~context), "should be None when no payload")
+    t->optionNone(GH.pullRequestPayload(~context))
   })
 
   t->test("No repository data", async t => {
@@ -67,7 +59,7 @@ zora("pullRequestPayload()", async t => {
       "payload": Some(payload),
     }
 
-    t->optionNone(GH.pullRequestPayload(~context), "should be None when no repo data")
+    t->optionNone(GH.pullRequestPayload(~context))
   })
 
   t->test("No pull request data", async t => {
@@ -81,10 +73,7 @@ zora("pullRequestPayload()", async t => {
       "payload": Some(payload),
     }
 
-    t->optionNone(
-      GH.pullRequestPayload(~context),
-      "should be None when not a PR event (based on name)",
-    )
+    t->optionNone(GH.pullRequestPayload(~context))
   })
 })
 
@@ -99,11 +88,7 @@ zora("pullRequestLabels()", async t => {
 
     let payload: GH.prPayloadType = {pull_request: {number: 1234, labels}, repository: repoData}
 
-    t->equal(
-      payload->GH.pullRequestLabels,
-      ["A", "B", "C"],
-      "should return all labels in a flattened attray",
-    )
+    t->equal(payload->GH.pullRequestLabels, ["A", "B", "C"])
   })
 })
 
